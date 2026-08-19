@@ -774,11 +774,46 @@ const initMemoryParticleDemo = (demo) => {
     particle[`v${exit.axis}`] = 0;
   };
 
-  const positionOutsideVideo = (shape) => {
+  const positionOutsideVideo = (shape, regionLoads, regionPriority) => {
     const metrics = getStageMetrics();
     const marginX = shape.halfWidth + 14;
     const marginY = shape.halfHeight + 14;
     const deadZone = getDeadZoneBounds(metrics, shape);
+    const regions = {
+      left: {
+        x: [marginX, Math.min(deadZone.left, metrics.width - marginX)],
+        y: [marginY, metrics.height - marginY],
+      },
+      right: {
+        x: [Math.max(deadZone.right, marginX), metrics.width - marginX],
+        y: [marginY, metrics.height - marginY],
+      },
+      top: {
+        x: [marginX, metrics.width - marginX],
+        y: [marginY, Math.min(deadZone.top, metrics.height - marginY)],
+      },
+      bottom: {
+        x: [marginX, metrics.width - marginX],
+        y: [Math.max(deadZone.bottom, marginY), metrics.height - marginY],
+      },
+    };
+    const priorityIndex = new Map(regionPriority.map((region, index) => [region, index]));
+    const availableRegions = Object.entries(regions)
+      .filter(([, range]) => range.x[1] >= range.x[0] && range.y[1] >= range.y[0])
+      .sort(([regionA], [regionB]) => (
+        regionLoads[regionA] - regionLoads[regionB]
+        || priorityIndex.get(regionA) - priorityIndex.get(regionB)
+      ));
+
+    if (availableRegions.length) {
+      const [region, range] = availableRegions[0];
+      regionLoads[region] += 1;
+      return {
+        x: randomBetween(range.x[0], range.x[1]),
+        y: randomBetween(range.y[0], range.y[1]),
+        region,
+      };
+    }
 
     for (let attempt = 0; attempt < 80; attempt += 1) {
       const x = randomBetween(marginX, Math.max(marginX, metrics.width - marginX));
@@ -787,7 +822,7 @@ const initMemoryParticleDemo = (demo) => {
         && x < deadZone.right
         && y > deadZone.top
         && y < deadZone.bottom;
-      if (!insideDeadZone) return { x, y };
+      if (!insideDeadZone) return { x, y, region: "free" };
     }
 
     const side = Math.random() > 0.5 ? 1 : -1;
@@ -802,6 +837,7 @@ const initMemoryParticleDemo = (demo) => {
         marginY,
         metrics.height - marginY,
       ),
+      region: side > 0 ? "right" : "left",
     };
   };
 
@@ -963,6 +999,14 @@ const initMemoryParticleDemo = (demo) => {
 
   const spawnMemoryList = (memoryList) => {
     retireParticles();
+    const horizontalRegions = Math.random() > 0.5
+      ? ["left", "right"]
+      : ["right", "left"];
+    const verticalRegions = Math.random() > 0.5
+      ? ["top", "bottom"]
+      : ["bottom", "top"];
+    const regionPriority = [...horizontalRegions, ...verticalRegions];
+    const regionLoads = { left: 0, right: 0, top: 0, bottom: 0 };
     const shuffledReveal = memoryList
       .map((_, index) => ({ index, delay: randomBetween(0, 3) }))
       .sort((a, b) => a.delay - b.delay);
@@ -976,7 +1020,7 @@ const initMemoryParticleDemo = (demo) => {
       particleLayer.append(element);
 
       const shape = measureParticleCapsule(element);
-      const position = positionOutsideVideo(shape);
+      const position = positionOutsideVideo(shape, regionLoads, regionPriority);
       const motionScale = memory.metadata?.isConditionImage ? 0.4 : 1;
       const particle = {
         element,
@@ -985,6 +1029,9 @@ const initMemoryParticleDemo = (demo) => {
         ...shape,
         x: position.x,
         y: position.y,
+        homeX: position.x,
+        homeY: position.y,
+        region: position.region,
         vx: randomBetween(-0.12, 0.12) * motionScale,
         vy: randomBetween(-0.12, 0.12) * motionScale,
         ax: 0,
@@ -993,6 +1040,7 @@ const initMemoryParticleDemo = (demo) => {
         retiring: false,
         removed: false,
       };
+      element.dataset.spawnRegion = position.region;
       element.style.transform = `translate3d(${(particle.x - particle.halfWidth).toFixed(2)}px, ${(particle.y - particle.halfHeight).toFixed(2)}px, 0)`;
 
       if (memory.type === "audio") {
@@ -1073,8 +1121,8 @@ const initMemoryParticleDemo = (demo) => {
     const liveParticles = particles.filter((particle) => !particle.removed);
 
     liveParticles.forEach((particle) => {
-      let forceX = (metrics.centerX - particle.x) * 0.000035;
-      let forceY = (metrics.centerY - particle.y) * 0.000035;
+      let forceX = (particle.homeX - particle.x) * 0.00006;
+      let forceY = (particle.homeY - particle.y) * 0.00006;
       const deadZone = getDeadZoneBounds(metrics, particle);
       const nearestX = clamp(particle.x, deadZone.left, deadZone.right);
       const nearestY = clamp(particle.y, deadZone.top, deadZone.bottom);
@@ -1265,6 +1313,7 @@ const initMemoryParticleDemo = (demo) => {
         capsuleSegmentHalf: particle.segmentHalf,
         collisionShape: "capsule",
         motionScale: particle.motionScale,
+        spawnRegion: particle.region,
         retiring: particle.retiring,
       }));
     },

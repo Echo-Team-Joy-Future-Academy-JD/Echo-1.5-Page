@@ -489,6 +489,8 @@ const initMemoryParticleDemo = (demo) => {
 
   const randomBetween = (min, max) => min + Math.random() * (max - min);
   const videoDeadZone = 52;
+  const edgeRestitution = 0.68;
+  const centerAttraction = 0.000035 * 1.2;
 
   const buildPlaybackProgress = () => {
     if (!playbackProgress) return;
@@ -743,8 +745,20 @@ const initMemoryParticleDemo = (demo) => {
     const maxX = metrics.width - particle.halfWidth - 10;
     const minY = particle.halfHeight + 10;
     const maxY = metrics.height - particle.halfHeight - 10;
-    particle.x = clamp(particle.x, minX, maxX);
-    particle.y = clamp(particle.y, minY, maxY);
+    if (particle.x < minX) {
+      particle.x = minX;
+      particle.vx = Math.abs(particle.vx) * edgeRestitution;
+    } else if (particle.x > maxX) {
+      particle.x = maxX;
+      particle.vx = -Math.abs(particle.vx) * edgeRestitution;
+    }
+    if (particle.y < minY) {
+      particle.y = minY;
+      particle.vy = Math.abs(particle.vy) * edgeRestitution;
+    } else if (particle.y > maxY) {
+      particle.y = maxY;
+      particle.vy = -Math.abs(particle.vy) * edgeRestitution;
+    }
 
     const deadZone = getDeadZoneBounds(metrics, particle);
     const insideDeadZone = particle.x > deadZone.left
@@ -1123,6 +1137,8 @@ const initMemoryParticleDemo = (demo) => {
     liveParticles.forEach((particle) => {
       let forceX = (particle.homeX - particle.x) * 0.00006;
       let forceY = (particle.homeY - particle.y) * 0.00006;
+      forceX += (metrics.centerX - particle.x) * centerAttraction;
+      forceY += (metrics.centerY - particle.y) * centerAttraction;
       const deadZone = getDeadZoneBounds(metrics, particle);
       const nearestX = clamp(particle.x, deadZone.left, deadZone.right);
       const nearestY = clamp(particle.y, deadZone.top, deadZone.bottom);

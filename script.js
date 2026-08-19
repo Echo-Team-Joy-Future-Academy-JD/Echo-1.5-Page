@@ -437,6 +437,11 @@ const initMemoryParticleDemo = (demo) => {
   const videoTerminal = demo.querySelector(".video-terminal");
   const video = demo.querySelector("[data-memory-video]");
   const playbackProgress = demo.querySelector("[data-memory-playback-progress]");
+  const memoryControls = demo.closest(".memory-intro-stage")?.querySelector("[data-memory-controls]");
+  const popcornControl = memoryControls?.querySelector("[data-popcorn-control]");
+  const controlsMenu = memoryControls?.querySelector(".memory-controls-menu");
+  const soundToggle = memoryControls?.querySelector("[data-sound-toggle]");
+  const conditionToggle = memoryControls?.querySelector("[data-condition-toggle]");
   const segmentDuration = memoryDemoConfig.shotDuration;
   const audioMemoryPlayer = new Audio();
   const particles = [];
@@ -461,6 +466,7 @@ const initMemoryParticleDemo = (demo) => {
   let progressAnimationFrame = null;
   let progressTrackStart = 0;
   let progressTrackWidth = 0;
+  let conditionVisible = true;
   const progressTicks = [];
   const isCompactGlow = window.matchMedia("(max-width: 560px)").matches;
   const ambientGlow = video
@@ -917,9 +923,67 @@ const initMemoryParticleDemo = (demo) => {
     activeAudioNode = null;
   };
 
+  const setToggleState = (toggle, enabled) => {
+    toggle?.setAttribute("aria-checked", String(enabled));
+  };
+
+  const closeMemoryControls = () => {
+    memoryControls?.classList.remove("is-open");
+    popcornControl?.setAttribute("aria-expanded", "false");
+    popcornControl?.setAttribute("aria-label", "Open memory controls");
+    controlsMenu?.setAttribute("aria-hidden", "true");
+    if (controlsMenu) controlsMenu.inert = true;
+  };
+
+  popcornControl?.addEventListener("click", () => {
+    const open = !memoryControls.classList.contains("is-open");
+    memoryControls.classList.toggle("is-open", open);
+    popcornControl.setAttribute("aria-expanded", String(open));
+    popcornControl.setAttribute("aria-label", open ? "Close memory controls" : "Open memory controls");
+    controlsMenu?.setAttribute("aria-hidden", String(!open));
+    if (controlsMenu) controlsMenu.inert = !open;
+  });
+
+  soundToggle?.addEventListener("click", () => {
+    if (!video) return;
+    const soundEnabled = video.muted;
+    video.muted = !soundEnabled;
+    setToggleState(soundToggle, soundEnabled);
+    if (!soundEnabled) stopAudioPreview();
+  });
+
+  conditionToggle?.addEventListener("click", () => {
+    conditionVisible = !conditionVisible;
+    setToggleState(conditionToggle, conditionVisible);
+    if (conditionVisible) {
+      loadShotMemoryList(currentShot);
+      return;
+    }
+    particles
+      .filter((particle) => particle.memory.metadata?.isConditionImage && !particle.retiring)
+      .forEach((particle) => {
+        particle.retiring = true;
+        particle.element.style.setProperty("--particle-exit-delay", "0s");
+        particle.element.classList.add("is-leaving");
+        window.setTimeout(() => {
+          particle.removed = true;
+          particle.element.remove();
+        }, 1100);
+      });
+  });
+
+  document.addEventListener("pointerdown", (event) => {
+    if (!memoryControls?.classList.contains("is-open")) return;
+    if (!memoryControls.contains(event.target)) closeMemoryControls();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeMemoryControls();
+  });
+
   const previewAudioMemory = async (particle) => {
     const audio = particle.memory.audio;
-    if (!audio?.src) return;
+    if (!audio?.src || video?.muted) return;
 
     if (activeAudioNode === particle.element && !audioMemoryPlayer.paused) {
       stopAudioPreview();
@@ -1013,6 +1077,9 @@ const initMemoryParticleDemo = (demo) => {
 
   const spawnMemoryList = (memoryList) => {
     retireParticles();
+    const visibleMemoryList = conditionVisible
+      ? memoryList
+      : memoryList.filter((memory) => !memory.metadata?.isConditionImage);
     const horizontalRegions = Math.random() > 0.5
       ? ["left", "right"]
       : ["right", "left"];
@@ -1021,12 +1088,12 @@ const initMemoryParticleDemo = (demo) => {
       : ["bottom", "top"];
     const regionPriority = [...horizontalRegions, ...verticalRegions];
     const regionLoads = { left: 0, right: 0, top: 0, bottom: 0 };
-    const shuffledReveal = memoryList
+    const shuffledReveal = visibleMemoryList
       .map((_, index) => ({ index, delay: randomBetween(0, 3) }))
       .sort((a, b) => a.delay - b.delay);
     const revealDelay = new Map(shuffledReveal.map(({ index, delay }) => [index, delay]));
 
-    memoryList.forEach((memory, index) => {
+    visibleMemoryList.forEach((memory, index) => {
       const element = createParticleElement(memory, index);
       const delay = revealDelay.get(index) || 0;
       element.style.setProperty("--particle-enter-delay", `${delay.toFixed(3)}s`);
@@ -1078,7 +1145,7 @@ const initMemoryParticleDemo = (demo) => {
       new CustomEvent("echo:memory-list-loaded", {
         detail: {
           shotIndex: currentShot,
-          memoryList,
+          memoryList: visibleMemoryList,
         },
       }),
     );

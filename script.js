@@ -45,6 +45,8 @@ let titleOverlayOpen = false;
 let titleOverlayProgress = 0;
 let titleOverlayAnimationFrame = null;
 let titleOverlayAnimating = false;
+let coverGestureLatched = false;
+let coverGestureReleaseTimer = null;
 
 function renderIntro() {
   const scrollable = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
@@ -190,15 +192,35 @@ if (introStage) {
   window.addEventListener("scroll", scheduleIntro, { passive: true });
   window.addEventListener("resize", renderIntro);
 
+  const scheduleCoverGestureRelease = () => {
+    window.clearTimeout(coverGestureReleaseTimer);
+    coverGestureReleaseTimer = window.setTimeout(() => {
+      if (titleOverlayAnimating) {
+        scheduleCoverGestureRelease();
+        return;
+      }
+      coverGestureLatched = false;
+    }, 360);
+  };
+
   window.addEventListener("wheel", (event) => {
     if (event.ctrlKey || Math.abs(event.deltaY) < 2) return;
     const atCover = window.scrollY <= introStage.offsetTop + 2;
     if (!atCover) return;
+    if (coverGestureLatched) {
+      event.preventDefault();
+      scheduleCoverGestureRelease();
+      return;
+    }
     if (event.deltaY > 0 && !titleOverlayOpen) {
       event.preventDefault();
+      coverGestureLatched = true;
+      scheduleCoverGestureRelease();
       animateTitleOverlay(true);
     } else if (event.deltaY < 0 && titleOverlayOpen) {
       event.preventDefault();
+      coverGestureLatched = true;
+      scheduleCoverGestureRelease();
       animateTitleOverlay(false);
     } else if (titleOverlayAnimating) {
       event.preventDefault();
@@ -217,13 +239,25 @@ if (introStage) {
     if (Math.abs(delta) < 12) return;
     if (delta > 0 && !titleOverlayOpen) {
       event.preventDefault();
+      coverGestureLatched = true;
       animateTitleOverlay(true);
     } else if (delta < 0 && titleOverlayOpen) {
       event.preventDefault();
+      coverGestureLatched = true;
       animateTitleOverlay(false);
+    } else if (coverGestureLatched) {
+      event.preventDefault();
     }
     introTouchY = nextY;
   }, { passive: false });
+  window.addEventListener("touchend", () => {
+    coverGestureLatched = false;
+    introTouchY = null;
+  }, { passive: true });
+  window.addEventListener("touchcancel", () => {
+    coverGestureLatched = false;
+    introTouchY = null;
+  }, { passive: true });
 
   window.addEventListener("keydown", (event) => {
     if (event.metaKey || event.ctrlKey || event.altKey) return;

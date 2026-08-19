@@ -48,31 +48,50 @@ function renderIntro() {
 
   if (!introStage) return;
 
+  const localScroll = Math.max(window.scrollY - introStage.offsetTop, 0);
   const distance = Math.max(introStage.offsetHeight - window.innerHeight, 1);
-  const progress = clamp((window.scrollY - introStage.offsetTop) / distance, 0, 1);
+  const progress = clamp(localScroll / distance, 0, 1);
+  const exitProgress = prefersReducedMotion
+    ? (localScroll > distance ? 1 : 0)
+    : smoothStep(clamp(
+      (localScroll - distance) / Math.max(window.innerHeight * 0.72, 1),
+      0,
+      1,
+    ));
   const scatter = smoothStep(clamp((progress - 0.12) / 0.42, 0, 1));
   const nextProgress = clamp((progress - 0.12) / 0.76, 0, 1);
   const next = prefersReducedMotion
     ? (progress > 0.5 ? 1 : 0)
     : smoothStep(nextProgress);
-  const memoryOpacity = 1 - next * 0.6;
+  const memoryOpacity = (1 - next * 0.52) * (1 - exitProgress);
+  const titleOpacity = next * (1 - exitProgress);
+  const videoActive = localScroll <= distance + 1;
 
   const nextVisible = next > 0.52;
   const nextSettled = next > 0.995;
   document.body.classList.toggle("is-past-intro", next > 0.88);
   introStage.classList.toggle("is-next-visible", nextVisible);
   introStage.classList.toggle("is-next-settled", nextSettled);
+  introStage.classList.toggle("is-video-exiting", exitProgress > 0);
+  introStage.classList.toggle("is-video-closed", !videoActive);
   window.dispatchEvent(new CustomEvent("echo:intro-progress", {
-    detail: { progress, nextVisible, nextSettled, transition: next },
+    detail: {
+      progress,
+      nextVisible,
+      nextSettled,
+      transition: next,
+      exitProgress,
+      videoActive,
+    },
   }));
 
   if (prefersReducedMotion) {
     const showNext = progress > 0.5;
-    introStage.style.setProperty("--intro-memory-opacity", showNext ? "0.4" : "1");
+    introStage.style.setProperty("--intro-memory-opacity", exitProgress ? "0" : showNext ? "0.48" : "1");
     introStage.style.setProperty("--intro-memory-transform", "translate3d(0, 0, 0) scale(1)");
     introStage.style.setProperty("--intro-glow-opacity", showNext ? "0.14" : "0.62");
     introStage.style.setProperty("--intro-progress-opacity", showNext ? "0" : "1");
-    introStage.style.setProperty("--intro-next-opacity", showNext ? "1" : "0");
+    introStage.style.setProperty("--intro-next-opacity", exitProgress ? "0" : showNext ? "1" : "0");
     introStage.style.setProperty("--intro-next-transform", "translate3d(0, 0, 0)");
     document.body.style.setProperty("--intro-nav-opacity", showNext ? "1" : "0");
     document.body.style.setProperty(
@@ -106,10 +125,10 @@ function renderIntro() {
     "--intro-progress-opacity",
     clamp(1 - next * 1.28, 0, 1).toFixed(3),
   );
-  introStage.style.setProperty("--intro-next-opacity", next.toFixed(3));
+  introStage.style.setProperty("--intro-next-opacity", titleOpacity.toFixed(3));
   introStage.style.setProperty(
     "--intro-next-transform",
-    `translate3d(0, ${((1 - next) * 28).toFixed(2)}px, 0) scale(${(0.985 + next * 0.015).toFixed(4)})`,
+    `translate3d(0, ${((1 - next) * 28 - exitProgress * 18).toFixed(2)}px, 0) scale(${(0.985 + next * 0.015).toFixed(4)})`,
   );
   document.body.style.setProperty("--intro-nav-opacity", next.toFixed(3));
   document.body.style.setProperty(
@@ -514,9 +533,7 @@ const initMemoryParticleDemo = (demo) => {
 
   window.addEventListener("echo:intro-progress", (event) => {
     memoryPageActive = !event.detail?.nextSettled;
-    introPageVisible = introStage
-      ? introStage.getBoundingClientRect().bottom > 0
-      : true;
+    introPageVisible = Boolean(event.detail?.videoActive);
     const titleMode = Boolean(event.detail?.nextVisible);
 
     if (titleMode && !titleModeActive) {

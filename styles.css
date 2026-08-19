@@ -2879,10 +2879,6 @@
     linear-gradient(0deg, rgba(0, 0, 0, 0.44), transparent 52%);
 }
 
-.intro-hero-stage.is-next-visible .memory-intro-stage {
-  opacity: max(var(--intro-memory-opacity, 0.4), 0.36);
-}
-
 .intro-hero-stage:not(.is-next-visible) .intro-next-hero .hero-actions,
 .intro-hero-stage:not(.is-next-visible) .intro-next-hero .intro-hero-metrics {
   pointer-events: none;

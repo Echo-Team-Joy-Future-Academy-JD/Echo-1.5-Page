@@ -969,11 +969,7 @@ const initMemoryParticleDemo = (demo) => {
         const progress = frameIndex / 20;
         const x = landX * progress;
         const y = -4 * lift * progress * (1 - progress) + groundY * progress;
-        const opacity = progress < 0.08
-          ? progress / 0.08
-          : progress > 0.82
-            ? (1 - progress) / 0.18
-            : 1;
+        const opacity = progress < 0.08 ? progress / 0.08 : 1;
         const scale = 0.5 + Math.min(progress / 0.18, 1) * 0.5;
         return {
           offset: progress,
@@ -987,7 +983,14 @@ const initMemoryParticleDemo = (demo) => {
         easing: "linear",
         fill: "forwards",
       });
-      window.setTimeout(() => kernel.remove(), 780 + delay);
+      const landingTime = 680 + delay;
+      window.setTimeout(() => {
+        kernel.animate(
+          [{ opacity: 1 }, { opacity: 0 }],
+          { duration: 260, easing: "ease-out", fill: "forwards" },
+        );
+      }, landingTime + 1500);
+      window.setTimeout(() => kernel.remove(), landingTime + 1760);
     });
     popcornControl?.classList.remove("is-popping");
     window.requestAnimationFrame(() => popcornControl?.classList.add("is-popping"));

@@ -2850,6 +2850,7 @@
   contain: layout paint style;
   isolation: isolate;
   transform-origin: left center;
+  will-change: opacity, transform;
 }
 
 .video-bg-page.intro-ready .site-nav {

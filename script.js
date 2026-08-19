@@ -35,6 +35,7 @@ document.documentElement.dataset.theme = "dark";
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const easeOut = (value) => 1 - Math.pow(1 - value, 3);
 const smoothStep = (value) => value * value * (3 - 2 * value);
+const smootherStep = (value) => value * value * value * (value * (value * 6 - 15) + 10);
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const introStage = document.querySelector("[data-intro-stage]");
@@ -166,10 +167,10 @@ function animateTitleOverlay(open) {
 
   titleOverlayAnimating = true;
   const startedAt = performance.now();
-  const duration = 560 * distance;
+  const duration = 750 * distance;
   const step = (time) => {
     const progress = clamp((time - startedAt) / duration, 0, 1);
-    titleOverlayProgress = start + (target - start) * smoothStep(progress);
+    titleOverlayProgress = start + (target - start) * smootherStep(progress);
     renderIntro();
     if (progress < 1) {
       titleOverlayAnimationFrame = window.requestAnimationFrame(step);

@@ -3299,6 +3299,56 @@
   line-height: 0;
 }
 
+.memory-image-annotation {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 11px);
+  display: grid;
+  width: max-content;
+  max-width: 128px;
+  gap: 4px;
+  padding-left: 9px;
+  border-left: 1px solid rgba(255, 74, 87, 0.5);
+  line-height: 1;
+  text-align: left;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.memory-image-annotation strong,
+.memory-image-annotation small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.memory-image-annotation strong {
+  color: rgba(255, 74, 87, 0.88);
+  font-family: "JetBrains Mono", monospace;
+  font-size: clamp(0.42rem, 0.46vw, 0.54rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.memory-image-annotation small {
+  color: rgba(255, 255, 255, 0.58);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(0.62rem, 0.68vw, 0.76rem);
+  font-weight: 300;
+  letter-spacing: 0.035em;
+}
+
+.memory-orb[data-spawn-region="right"] .memory-image-annotation {
+  right: calc(100% + 11px);
+  left: auto;
+  padding-right: 9px;
+  padding-left: 0;
+  border-right: 1px solid rgba(255, 74, 87, 0.5);
+  border-left: 0;
+  text-align: right;
+}
+
 .memory-stage-only .audio-orb {
   display: grid;
   width: clamp(86px, 7.4vw, 116px);
@@ -3351,6 +3401,10 @@
 
   .memory-stage-only .memory-orb {
     width: 66px;
+  }
+
+  .memory-image-annotation {
+    display: none;
   }
 
   .memory-stage-only .audio-orb {

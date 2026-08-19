@@ -37,6 +37,17 @@ const easeOut = (value) => 1 - Math.pow(1 - value, 3);
 const smoothStep = (value) => value * value * (3 - 2 * value);
 const smootherStep = (value) => value * value * value * (value * (value * 6 - 15) + 10);
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const characterMemoryNames = Object.freeze({
+  ID_A: "Nathan Vale",
+  ID_B: "Elena Maris",
+  ID_C: "Tomas",
+  ID_D: "Rusk",
+});
+const sceneMemoryNames = Object.freeze({
+  CONDITION_IMAGE: "scene condition",
+  PREVIOUS_SHOT: "previous shot",
+  RADIO_REFERENCE: "radio reference",
+});
 
 const introStage = document.querySelector("[data-intro-stage]");
 const scrollProgress = document.querySelector("[data-scroll-progress]");
@@ -1232,8 +1243,22 @@ const initMemoryParticleDemo = (demo) => {
       drawAudioMemory(canvas, memory.audio?.waveform);
     } else {
       element.dataset.memoryOrb = "";
-      element.setAttribute("aria-label", `Image memory ${index + 1}`);
+      const memoryId = memory.img?.memoryId || "IMAGE_MEMORY";
+      const memoryName = characterMemoryNames[memoryId]
+        || sceneMemoryNames[memoryId]
+        || memory.img?.referenceType?.replaceAll("_", " ")
+        || "image memory";
+      const annotation = document.createElement("span");
+      const annotationId = document.createElement("strong");
+      const annotationName = document.createElement("small");
+      annotation.className = "memory-image-annotation";
+      annotationId.textContent = memoryId.replaceAll("_", " ");
+      annotationName.textContent = memoryName;
+      annotation.append(annotationId, annotationName);
+      element.setAttribute("aria-label", `${memoryId}, ${memoryName}`);
       drawImageMemory(canvas, memory.img?.src);
+      element.append(canvas, annotation);
+      return element;
     }
 
     element.append(canvas);

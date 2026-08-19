@@ -3166,7 +3166,7 @@ html.is-title-gate-scrolling {
   pointer-events: none;
 }
 
-.memory-stage-only.is-condition-hidden [data-condition-image] {
+.memory-stage-only.is-condition-hidden [data-condition-content] {
   opacity: 0 !important;
   pointer-events: none;
 }

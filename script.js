@@ -1098,6 +1098,7 @@ const initMemoryParticleDemo = (demo) => {
     element.dataset.memoryId = memory.id || `memory-${index + 1}`;
     element.dataset.memoryType = isText ? "text" : isAudio ? "audio" : "img";
     if (memory.metadata?.isConditionImage) element.dataset.conditionImage = "";
+    element.dataset.conditionContent = "";
 
     if (isText) {
       const label = document.createElement("figcaption");
@@ -1164,9 +1165,7 @@ const initMemoryParticleDemo = (demo) => {
 
   const spawnMemoryList = (memoryList) => {
     retireParticles();
-    const visibleMemoryList = conditionVisible
-      ? memoryList
-      : memoryList.filter((memory) => !memory.metadata?.isConditionImage);
+    const visibleMemoryList = conditionVisible ? memoryList : [];
     const horizontalRegions = Math.random() > 0.5
       ? ["left", "right"]
       : ["right", "left"];
@@ -1283,7 +1282,7 @@ const initMemoryParticleDemo = (demo) => {
       if (currentShot >= 0) loadShotMemoryList(currentShot);
     } else {
       particles
-        .filter((particle) => particle.memory.metadata?.isConditionImage && !particle.retiring)
+        .filter((particle) => !particle.retiring)
         .forEach((particle) => {
           particle.retiring = true;
           particle.element.style.setProperty("--particle-exit-delay", "0s");

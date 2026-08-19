@@ -104,6 +104,8 @@ const defaultProvider = {
       },
       metadata: {
         sourceShotId: shot.readsMemoryFrom,
+        isConditionImage: memory.referenceType === "scene_condition"
+          || memory.memoryId === "CONDITION_IMAGE",
         precomputed: true,
       },
     }));

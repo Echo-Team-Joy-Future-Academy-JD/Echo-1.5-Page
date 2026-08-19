@@ -488,6 +488,8 @@ const initMemoryParticleDemo = (demo) => {
   audioMemoryPlayer.preload = "metadata";
 
   const randomBetween = (min, max) => min + Math.random() * (max - min);
+  const particleScales = [1, 1.25, 1.5];
+  const videoDeadZone = 52;
 
   const buildPlaybackProgress = () => {
     if (!playbackProgress) return;
@@ -716,24 +718,91 @@ const initMemoryParticleDemo = (demo) => {
     return stageMetricsCache;
   };
 
-  const positionOutsideVideo = (radius) => {
+  const measureParticleCapsule = (element) => {
+    const width = Math.max(element.offsetWidth, 1);
+    const height = Math.max(element.offsetHeight, 1);
+    const radius = Math.min(width, height) / 2;
+    return {
+      width,
+      height,
+      halfWidth: width / 2,
+      halfHeight: height / 2,
+      radius,
+      segmentHalf: Math.max(0, width / 2 - radius),
+    };
+  };
+
+  const getDeadZoneBounds = (metrics, shape, padding = videoDeadZone) => ({
+    left: metrics.centerX - metrics.videoHalfWidth - padding - shape.halfWidth,
+    right: metrics.centerX + metrics.videoHalfWidth + padding + shape.halfWidth,
+    top: metrics.centerY - metrics.videoHalfHeight - padding - shape.halfHeight,
+    bottom: metrics.centerY + metrics.videoHalfHeight + padding + shape.halfHeight,
+  });
+
+  const constrainParticle = (particle, metrics) => {
+    const minX = particle.halfWidth + 10;
+    const maxX = metrics.width - particle.halfWidth - 10;
+    const minY = particle.halfHeight + 10;
+    const maxY = metrics.height - particle.halfHeight - 10;
+    particle.x = clamp(particle.x, minX, maxX);
+    particle.y = clamp(particle.y, minY, maxY);
+
+    const deadZone = getDeadZoneBounds(metrics, particle);
+    const insideDeadZone = particle.x > deadZone.left
+      && particle.x < deadZone.right
+      && particle.y > deadZone.top
+      && particle.y < deadZone.bottom;
+    if (!insideDeadZone) return;
+
+    const exits = [
+      deadZone.left >= minX
+        ? { distance: particle.x - deadZone.left, axis: "x", value: deadZone.left }
+        : null,
+      deadZone.right <= maxX
+        ? { distance: deadZone.right - particle.x, axis: "x", value: deadZone.right }
+        : null,
+      deadZone.top >= minY
+        ? { distance: particle.y - deadZone.top, axis: "y", value: deadZone.top }
+        : null,
+      deadZone.bottom <= maxY
+        ? { distance: deadZone.bottom - particle.y, axis: "y", value: deadZone.bottom }
+        : null,
+    ].filter(Boolean).sort((a, b) => a.distance - b.distance);
+    const exit = exits[0];
+    if (!exit) return;
+
+    particle[exit.axis] = exit.value;
+    particle[`v${exit.axis}`] = 0;
+  };
+
+  const positionOutsideVideo = (shape) => {
     const metrics = getStageMetrics();
-    const margin = radius + 14;
-    const exclusionX = metrics.videoHalfWidth + radius + 34;
-    const exclusionY = metrics.videoHalfHeight + radius + 34;
+    const marginX = shape.halfWidth + 14;
+    const marginY = shape.halfHeight + 14;
+    const deadZone = getDeadZoneBounds(metrics, shape);
 
     for (let attempt = 0; attempt < 80; attempt += 1) {
-      const x = randomBetween(margin, Math.max(margin, metrics.width - margin));
-      const y = randomBetween(margin, Math.max(margin, metrics.height - margin));
-      const nx = (x - metrics.centerX) / exclusionX;
-      const ny = (y - metrics.centerY) / exclusionY;
-      if (nx * nx + ny * ny > 1.15) return { x, y };
+      const x = randomBetween(marginX, Math.max(marginX, metrics.width - marginX));
+      const y = randomBetween(marginY, Math.max(marginY, metrics.height - marginY));
+      const insideDeadZone = x > deadZone.left
+        && x < deadZone.right
+        && y > deadZone.top
+        && y < deadZone.bottom;
+      if (!insideDeadZone) return { x, y };
     }
 
     const side = Math.random() > 0.5 ? 1 : -1;
     return {
-      x: clamp(metrics.centerX + side * exclusionX * 1.15, margin, metrics.width - margin),
-      y: clamp(randomBetween(margin, metrics.height - margin), margin, metrics.height - margin),
+      x: clamp(
+        side > 0 ? deadZone.right + 8 : deadZone.left - 8,
+        marginX,
+        metrics.width - marginX,
+      ),
+      y: clamp(
+        randomBetween(marginY, metrics.height - marginY),
+        marginY,
+        metrics.height - marginY,
+      ),
     };
   };
 
@@ -828,6 +897,7 @@ const initMemoryParticleDemo = (demo) => {
         : "memory-orb memory-particle";
     element.dataset.memoryId = memory.id || `memory-${index + 1}`;
     element.dataset.memoryType = isText ? "text" : isAudio ? "audio" : "img";
+    if (memory.metadata?.isConditionImage) element.dataset.conditionImage = "";
 
     if (isText) {
       const label = document.createElement("figcaption");
@@ -902,16 +972,20 @@ const initMemoryParticleDemo = (demo) => {
     memoryList.forEach((memory, index) => {
       const element = createParticleElement(memory, index);
       const delay = revealDelay.get(index) || 0;
+      const scale = particleScales[Math.floor(Math.random() * particleScales.length)];
+      element.style.setProperty("--particle-scale", scale.toFixed(2));
+      element.dataset.particleScale = scale.toFixed(2);
       element.style.setProperty("--particle-enter-delay", `${delay.toFixed(3)}s`);
       element.dataset.targetTick = delay.toFixed(3);
       particleLayer.append(element);
 
-      const radius = Math.max(element.offsetWidth, element.offsetHeight) / 2;
-      const position = positionOutsideVideo(radius);
+      const shape = measureParticleCapsule(element);
+      const position = positionOutsideVideo(shape);
       const particle = {
         element,
         memory,
-        radius,
+        scale,
+        ...shape,
         x: position.x,
         y: position.y,
         vx: randomBetween(-0.12, 0.12),
@@ -922,6 +996,7 @@ const initMemoryParticleDemo = (demo) => {
         retiring: false,
         removed: false,
       };
+      element.style.transform = `translate3d(${(particle.x - particle.halfWidth).toFixed(2)}px, ${(particle.y - particle.halfHeight).toFixed(2)}px, 0)`;
 
       if (memory.type === "audio") {
         element.addEventListener("click", () => previewAudioMemory(particle));
@@ -1003,33 +1078,58 @@ const initMemoryParticleDemo = (demo) => {
     liveParticles.forEach((particle) => {
       let forceX = (metrics.centerX - particle.x) * 0.000035;
       let forceY = (metrics.centerY - particle.y) * 0.000035;
-      const dx = particle.x - metrics.centerX;
-      const dy = particle.y - metrics.centerY;
-      const exclusionX = metrics.videoHalfWidth + particle.radius + 30;
-      const exclusionY = metrics.videoHalfHeight + particle.radius + 30;
-      const normalizedX = dx / exclusionX;
-      const normalizedY = dy / exclusionY;
-      const normalizedDistance = Math.sqrt(
-        normalizedX * normalizedX + normalizedY * normalizedY,
-      );
+      const deadZone = getDeadZoneBounds(metrics, particle);
+      const nearestX = clamp(particle.x, deadZone.left, deadZone.right);
+      const nearestY = clamp(particle.y, deadZone.top, deadZone.bottom);
+      let deadZoneDx = particle.x - nearestX;
+      let deadZoneDy = particle.y - nearestY;
+      let deadZoneDistance = Math.hypot(deadZoneDx, deadZoneDy);
 
-      if (normalizedDistance < 1.24) {
-        const distance = Math.max(Math.hypot(dx, dy), 1);
-        const strength = (1.24 - normalizedDistance) * 0.34;
-        forceX += (dx / distance) * strength;
-        forceY += (dy / distance) * strength;
+      if (deadZoneDistance === 0) {
+        const exits = [
+          { distance: particle.x - deadZone.left, x: -1, y: 0 },
+          { distance: deadZone.right - particle.x, x: 1, y: 0 },
+          { distance: particle.y - deadZone.top, x: 0, y: -1 },
+          { distance: deadZone.bottom - particle.y, x: 0, y: 1 },
+        ].sort((a, b) => a.distance - b.distance);
+        deadZoneDx = exits[0].x;
+        deadZoneDy = exits[0].y;
+        deadZoneDistance = -exits[0].distance;
+      } else {
+        deadZoneDx /= deadZoneDistance;
+        deadZoneDy /= deadZoneDistance;
+      }
+
+      const deadZoneSoftEdge = 38;
+      if (deadZoneDistance < deadZoneSoftEdge) {
+        const strength = deadZoneDistance < 0
+          ? 0.32 + Math.min(Math.abs(deadZoneDistance), 90) * 0.012
+          : (1 - deadZoneDistance / deadZoneSoftEdge) * 0.32;
+        forceX += deadZoneDx * strength;
+        forceY += deadZoneDy * strength;
       }
 
       liveParticles.forEach((other) => {
         if (other === particle) return;
         const pairX = particle.x - other.x;
         const pairY = particle.y - other.y;
-        const distance = Math.max(Math.hypot(pairX, pairY), 1);
-        const repelDistance = particle.radius + other.radius + 34;
+        const capsuleX = Math.sign(pairX || 1) * Math.max(
+          Math.abs(pairX) - particle.segmentHalf - other.segmentHalf,
+          0,
+        );
+        let collisionX = capsuleX;
+        let collisionY = pairY;
+        let distance = Math.hypot(collisionX, collisionY);
+        if (distance < 0.001) {
+          collisionX = pairX || (Math.random() - 0.5);
+          collisionY = pairY || (Math.random() - 0.5);
+          distance = Math.max(Math.hypot(collisionX, collisionY), 0.001);
+        }
+        const repelDistance = particle.radius + other.radius + 26;
         if (distance >= repelDistance) return;
-        const strength = (1 - distance / repelDistance) * 0.13;
-        forceX += (pairX / distance) * strength;
-        forceY += (pairY / distance) * strength;
+        const strength = (1 - distance / repelDistance) * 0.18;
+        forceX += (collisionX / distance) * strength;
+        forceY += (collisionY / distance) * strength;
       });
 
       if (pointer.active) {
@@ -1044,14 +1144,15 @@ const initMemoryParticleDemo = (demo) => {
         }
       }
 
-      const edge = particle.radius + 10;
-      if (particle.x < edge) forceX += (edge - particle.x) * 0.014;
-      if (particle.x > metrics.width - edge) {
-        forceX -= (particle.x - (metrics.width - edge)) * 0.014;
+      const edgeX = particle.halfWidth + 10;
+      const edgeY = particle.halfHeight + 10;
+      if (particle.x < edgeX) forceX += (edgeX - particle.x) * 0.014;
+      if (particle.x > metrics.width - edgeX) {
+        forceX -= (particle.x - (metrics.width - edgeX)) * 0.014;
       }
-      if (particle.y < edge) forceY += (edge - particle.y) * 0.014;
-      if (particle.y > metrics.height - edge) {
-        forceY -= (particle.y - (metrics.height - edge)) * 0.014;
+      if (particle.y < edgeY) forceY += (edgeY - particle.y) * 0.014;
+      if (particle.y > metrics.height - edgeY) {
+        forceY -= (particle.y - (metrics.height - edgeY)) * 0.014;
       }
 
       const targetAccelerationX = forceX / particle.mass;
@@ -1068,7 +1169,8 @@ const initMemoryParticleDemo = (demo) => {
       }
       particle.x += particle.vx * delta;
       particle.y += particle.vy * delta;
-      particle.element.style.transform = `translate3d(${(particle.x - particle.radius).toFixed(2)}px, ${(particle.y - particle.radius).toFixed(2)}px, 0)`;
+      constrainParticle(particle, metrics);
+      particle.element.style.transform = `translate3d(${(particle.x - particle.halfWidth).toFixed(2)}px, ${(particle.y - particle.halfHeight).toFixed(2)}px, 0)`;
     });
 
     for (let index = particles.length - 1; index >= 0; index -= 1) {
@@ -1158,6 +1260,12 @@ const initMemoryParticleDemo = (demo) => {
         ax: particle.ax,
         ay: particle.ay,
         mass: particle.mass,
+        scale: particle.scale,
+        width: particle.width,
+        height: particle.height,
+        capsuleRadius: particle.radius,
+        capsuleSegmentHalf: particle.segmentHalf,
+        collisionShape: "capsule",
         retiring: particle.retiring,
       }));
     },

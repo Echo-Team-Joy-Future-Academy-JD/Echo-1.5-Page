@@ -108,6 +108,16 @@ const defaultProvider = {
       },
     }));
 
+    const prompts = (shot.promptMemory || []).map((memory) => ({
+      id: memory.id,
+      type: "text",
+      text: memory,
+      metadata: {
+        sourceShotId: shot.id,
+        precomputed: true,
+      },
+    }));
+
     const audio = shot.audioMemory
       ? [{
           id: shot.audioMemory.id,
@@ -123,7 +133,7 @@ const defaultProvider = {
         }]
       : [];
 
-    return [...images, ...audio];
+    return [...images, ...prompts, ...audio];
   },
 
   async onMemoriesWritten() {},

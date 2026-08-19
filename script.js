@@ -818,14 +818,39 @@ const initMemoryParticleDemo = (demo) => {
 
   const createParticleElement = (memory, index) => {
     const isAudio = memory.type === "audio";
+    const isText = memory.type === "text";
     const element = document.createElement("figure");
-    const canvas = document.createElement("canvas");
 
-    element.className = isAudio
-      ? "audio-orb memory-particle"
-      : "memory-orb memory-particle";
+    element.className = isText
+      ? "prompt-memory memory-particle"
+      : isAudio
+        ? "audio-orb memory-particle"
+        : "memory-orb memory-particle";
     element.dataset.memoryId = memory.id || `memory-${index + 1}`;
-    element.dataset.memoryType = isAudio ? "audio" : "img";
+    element.dataset.memoryType = isText ? "text" : isAudio ? "audio" : "img";
+
+    if (isText) {
+      const label = document.createElement("figcaption");
+      const copy = document.createElement("p");
+      const text = memory.text?.text || "";
+      const highlightPattern = /(\b(?:ID_[A-Z]+|PREVIOUS_SHOT|CONDITION_IMAGE)\b|[\"“][^\"”]+[\"”]|\b(?:close-up|wide view|wide shot|camera|tracking shot|pushes? in|pulls? back|dolly|pans?|tilts?|cut to|over-the-shoulder|says?|asks?|whispers?|replies?|shouts?|turns?|opens?|holds?|hands?|enters?|reveals?|looks?|walks?|runs?)\b)/gi;
+      let cursor = 0;
+      text.replace(highlightPattern, (match, _capture, offset) => {
+        if (offset > cursor) copy.append(document.createTextNode(text.slice(cursor, offset)));
+        const highlight = document.createElement("strong");
+        highlight.textContent = match;
+        copy.append(highlight);
+        cursor = offset + match.length;
+        return match;
+      });
+      if (cursor < text.length) copy.append(document.createTextNode(text.slice(cursor)));
+      label.textContent = memory.text?.label || "Prompt memory";
+      element.setAttribute("aria-label", `${label.textContent}: ${text}`);
+      element.append(label, copy);
+      return element;
+    }
+
+    const canvas = document.createElement("canvas");
     canvas.width = isAudio ? 180 : 160;
     canvas.height = isAudio ? 90 : 160;
 
@@ -875,7 +900,7 @@ const initMemoryParticleDemo = (demo) => {
       element.dataset.targetTick = delay.toFixed(3);
       particleLayer.append(element);
 
-      const radius = element.offsetWidth / 2;
+      const radius = Math.max(element.offsetWidth, element.offsetHeight) / 2;
       const position = positionOutsideVideo(radius);
       const particle = {
         element,

@@ -2946,6 +2946,43 @@ html.is-title-gate-scrolling {
   pointer-events: none;
 }
 
+.memory-particle-layer .prompt-memory {
+  width: clamp(180px, 15vw, 238px);
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.96),
+    0 3px 18px rgba(0, 0, 0, 0.9);
+  font-family: "JDLangZheng", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.36;
+  letter-spacing: 0.008em;
+}
+
+.prompt-memory figcaption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.prompt-memory p {
+  margin: 0;
+  font-size: clamp(0.76rem, 0.9vw, 0.98rem);
+}
+
+.prompt-memory strong {
+  color: var(--red-hot);
+  font-weight: 600;
+}
+
+.memory-particle-layer .prompt-memory.is-visible {
+  opacity: 1;
+}
+
 .memory-particle-layer .memory-orb::before {
   animation-duration: 16s;
 }
@@ -2981,6 +3018,14 @@ html.is-title-gate-scrolling {
     display: grid;
     width: 76px;
   }
+
+  .memory-particle-layer .prompt-memory {
+    width: 156px;
+  }
+
+  .prompt-memory p {
+    font-size: 0.68rem;
+  }
 }
 
 @media (max-width: 560px) {
@@ -3013,4 +3058,23 @@ html.is-title-gate-scrolling {
     gap: 2px;
     padding-inline: 2px;
   }
+}
+@font-face {
+  font-family: "JDLangZheng";
+  src:
+    url("/fonts/JINGDONGLangZhengTi2-Regular.woff2") format("woff2"),
+    url("/fonts/JINGDONGLangZhengTi2-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JDLangZheng";
+  src:
+    url("/fonts/jingdonglangzhengti2-Semibold.woff2") format("woff2"),
+    url("/fonts/jingdonglangzhengti2-Semibold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
 }

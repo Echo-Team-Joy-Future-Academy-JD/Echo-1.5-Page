@@ -75,6 +75,54 @@ const createWaveform = (videoPath) => {
   });
 };
 
+const promptTextFromRequest = (request) => (
+  request.prompt
+  || request.payload?.shot?.text
+  || request.payload?.prompt
+  || ""
+);
+
+const normalizePromptSentence = (sentence) => sentence
+  .replace(/^\s*(?:This video has \d+ shots?\.\s*)?/i, "")
+  .replace(/^\s*shot\s*\d+\s*:\s*/i, "")
+  .replace(/\s+/g, " ")
+  .trim();
+
+const promptSnippetsFromRequests = (requests, shotId) => {
+  const sentences = requests
+    .flatMap((request) => promptTextFromRequest(request).match(/[^.!?]+(?:[.!?]+[\"”]?|$)/g) || [])
+    .map(normalizePromptSentence)
+    .filter((sentence) => sentence.length >= 28)
+    .filter((sentence) => !/^(?:No |Only the written|Audio is limited|There is no )/i.test(sentence));
+
+  const uniqueSentences = [...new Set(sentences)];
+  const scoreSentence = (sentence) => {
+    let score = 0;
+    if (/[\"“”]/.test(sentence)) score += 7;
+    if (/\b(?:says?|asks?|whispers?|replies?|shouts?|voice)\b/i.test(sentence)) score += 5;
+    if (/\b(?:ID_[A-Z]+|PREVIOUS_SHOT|CONDITION_IMAGE)\b/.test(sentence)) score += 4;
+    if (/\b(?:close-up|wide view|wide shot|camera|tracking|pushes? in|dolly|pan|tilt|cut to|over-the-shoulder)\b/i.test(sentence)) score += 3;
+    if (/\b(?:turns?|opens?|holds?|hands?|enters?|reveals?|looks?|walks?|runs?)\b/i.test(sentence)) score += 2;
+    return score;
+  };
+
+  return uniqueSentences
+    .map((text, sourceIndex) => ({ text, sourceIndex, score: scoreSentence(text) }))
+    .sort((a, b) => b.score - a.score || a.sourceIndex - b.sourceIndex)
+    .slice(0, 2)
+    .sort((a, b) => a.sourceIndex - b.sourceIndex)
+    .map(({ text }, snippetIndex) => {
+      const clipped = text.length > 190
+        ? `${text.slice(0, 186).replace(/\s+\S*$/, "")}…`
+        : text;
+      return {
+        id: `${shotId}-prompt-${String(snippetIndex + 1).padStart(2, "0")}`,
+        text: clipped,
+        label: `Prompt · ${shotId}`,
+      };
+    });
+};
+
 let timelineTime = 0;
 const shots = index.entries.map((entry, shotIndex) => {
   const shotNumber = String(entry.sequence).padStart(3, "0");
@@ -84,6 +132,10 @@ const shots = index.entries.map((entry, shotIndex) => {
   const metadata = JSON.parse(
     readFileSync(join(sourceDirectory, "metadata.json"), "utf8"),
   );
+  const generationRequests = (metadata.requests || [])
+    .map((request) => join(sourceDirectory, request.packaged_request || ""))
+    .filter((requestPath) => existsSync(requestPath))
+    .map((requestPath) => JSON.parse(readFileSync(requestPath, "utf8")));
   const referenceDirectory = join(referencesRoot, shotId);
   mkdirSync(referenceDirectory, { recursive: true });
 
@@ -138,6 +190,7 @@ const shots = index.entries.map((entry, shotIndex) => {
     loadedIds: entry.memory_loaded_ids || [],
     readsMemoryFrom: "generation-request",
     visualMemory,
+    promptMemory: promptSnippetsFromRequests(generationRequests, shotId),
     writtenAudioMemory: {
       id: `${shotId}-audio-memory`,
       src: `audio/${audioName}`,
@@ -169,5 +222,5 @@ writeFileSync(
 );
 
 console.log(
-  `Prepared ${shots.length} Last Visa shots with ${shots.reduce((total, shot) => total + shot.visualMemory.length, 0)} visual references.`,
+  `Prepared ${shots.length} Last Visa shots with ${shots.reduce((total, shot) => total + shot.visualMemory.length, 0)} visual references and ${shots.reduce((total, shot) => total + shot.promptMemory.length, 0)} prompt excerpts.`,
 );

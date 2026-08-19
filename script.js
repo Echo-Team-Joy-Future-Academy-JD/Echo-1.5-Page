@@ -40,6 +40,10 @@ const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)
 const introStage = document.querySelector("[data-intro-stage]");
 const scrollProgress = document.querySelector("[data-scroll-progress]");
 let introFrame = null;
+let titleOverlayOpen = false;
+let titleOverlayProgress = 0;
+let titleOverlayAnimationFrame = null;
+let titleOverlayAnimating = false;
 
 function renderIntro() {
   const scrollable = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
@@ -51,21 +55,18 @@ function renderIntro() {
   const localScroll = Math.max(window.scrollY - introStage.offsetTop, 0);
   const distance = Math.max(introStage.offsetHeight - window.innerHeight, 1);
   const progress = clamp(localScroll / distance, 0, 1);
+  if (localScroll > 2 && !titleOverlayOpen && !titleOverlayAnimating) {
+    titleOverlayOpen = true;
+    titleOverlayProgress = 1;
+  }
   const exitProgress = prefersReducedMotion
-    ? (localScroll > distance ? 1 : 0)
-    : smoothStep(clamp(
-      (localScroll - distance) / Math.max(window.innerHeight * 0.72, 1),
-      0,
-      1,
-    ));
-  const scatter = smoothStep(clamp((progress - 0.12) / 0.42, 0, 1));
-  const nextProgress = clamp((progress - 0.12) / 0.76, 0, 1);
-  const next = prefersReducedMotion
     ? (progress > 0.5 ? 1 : 0)
-    : smoothStep(nextProgress);
+    : smoothStep(progress);
+  const scatter = smoothStep(clamp((progress - 0.12) / 0.42, 0, 1));
+  const next = titleOverlayProgress;
   const memoryOpacity = (1 - next * 0.52) * (1 - exitProgress);
   const titleOpacity = next * (1 - exitProgress);
-  const videoActive = localScroll <= distance + 1;
+  const videoActive = exitProgress < 0.995;
 
   const nextVisible = next > 0.52;
   const nextSettled = next > 0.995;
@@ -86,7 +87,7 @@ function renderIntro() {
   }));
 
   if (prefersReducedMotion) {
-    const showNext = progress > 0.5;
+    const showNext = titleOverlayOpen;
     introStage.style.setProperty("--intro-memory-opacity", exitProgress ? "0" : showNext ? "0.48" : "1");
     introStage.style.setProperty("--intro-memory-transform", "translate3d(0, 0, 0) scale(1)");
     introStage.style.setProperty("--intro-glow-opacity", showNext ? "0.14" : "0.62");
@@ -145,11 +146,97 @@ function scheduleIntro() {
   });
 }
 
+function animateTitleOverlay(open) {
+  if (!introStage) return;
+  titleOverlayOpen = open;
+  if (titleOverlayAnimationFrame) {
+    window.cancelAnimationFrame(titleOverlayAnimationFrame);
+    titleOverlayAnimationFrame = null;
+  }
+
+  const start = titleOverlayProgress;
+  const target = open ? 1 : 0;
+  const distance = Math.abs(target - start);
+  if (prefersReducedMotion || distance < 0.001) {
+    titleOverlayProgress = target;
+    titleOverlayAnimating = false;
+    renderIntro();
+    return;
+  }
+
+  titleOverlayAnimating = true;
+  const startedAt = performance.now();
+  const duration = 560 * distance;
+  const step = (time) => {
+    const progress = clamp((time - startedAt) / duration, 0, 1);
+    titleOverlayProgress = start + (target - start) * smoothStep(progress);
+    renderIntro();
+    if (progress < 1) {
+      titleOverlayAnimationFrame = window.requestAnimationFrame(step);
+      return;
+    }
+    titleOverlayProgress = target;
+    titleOverlayAnimating = false;
+    titleOverlayAnimationFrame = null;
+    renderIntro();
+  };
+  titleOverlayAnimationFrame = window.requestAnimationFrame(step);
+}
+
 if (introStage) {
   document.body.classList.add("intro-ready");
   renderIntro();
   window.addEventListener("scroll", scheduleIntro, { passive: true });
   window.addEventListener("resize", renderIntro);
+
+  window.addEventListener("wheel", (event) => {
+    if (event.ctrlKey || Math.abs(event.deltaY) < 2) return;
+    const atCover = window.scrollY <= introStage.offsetTop + 2;
+    if (!atCover) return;
+    if (event.deltaY > 0 && !titleOverlayOpen) {
+      event.preventDefault();
+      animateTitleOverlay(true);
+    } else if (event.deltaY < 0 && titleOverlayOpen) {
+      event.preventDefault();
+      animateTitleOverlay(false);
+    } else if (titleOverlayAnimating) {
+      event.preventDefault();
+    }
+  }, { passive: false });
+
+  let introTouchY = null;
+  window.addEventListener("touchstart", (event) => {
+    introTouchY = event.touches[0]?.clientY ?? null;
+  }, { passive: true });
+  window.addEventListener("touchmove", (event) => {
+    if (introTouchY === null || window.scrollY > introStage.offsetTop + 2) return;
+    const nextY = event.touches[0]?.clientY;
+    if (!Number.isFinite(nextY)) return;
+    const delta = introTouchY - nextY;
+    if (Math.abs(delta) < 12) return;
+    if (delta > 0 && !titleOverlayOpen) {
+      event.preventDefault();
+      animateTitleOverlay(true);
+    } else if (delta < 0 && titleOverlayOpen) {
+      event.preventDefault();
+      animateTitleOverlay(false);
+    }
+    introTouchY = nextY;
+  }, { passive: false });
+
+  window.addEventListener("keydown", (event) => {
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    if (window.scrollY > introStage.offsetTop + 2) return;
+    const opens = ["ArrowDown", "PageDown", " "].includes(event.key);
+    const closes = ["ArrowUp", "PageUp"].includes(event.key);
+    if (opens && !titleOverlayOpen) {
+      event.preventDefault();
+      animateTitleOverlay(true);
+    } else if (closes && titleOverlayOpen) {
+      event.preventDefault();
+      animateTitleOverlay(false);
+    }
+  });
 }
 
 if (!prefersReducedMotion) {

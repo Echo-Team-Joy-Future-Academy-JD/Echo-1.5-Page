@@ -2602,6 +2602,10 @@
   padding: 0;
 }
 
+.video-bg-page .intro-hero-stage {
+  min-height: 165svh;
+}
+
 .memory-intro-stage {
   position: absolute;
   inset: 0;

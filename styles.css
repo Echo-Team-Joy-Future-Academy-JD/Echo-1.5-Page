@@ -2929,7 +2929,8 @@ html.is-title-gate-scrolling {
   opacity: 0;
   animation: none;
   transition:
-    opacity 0.92s cubic-bezier(0.16, 1, 0.3, 1) var(--particle-enter-delay, 0s),
+    opacity 1.15s ease-in-out var(--particle-enter-delay, 0s),
+    filter 1.15s ease-in-out var(--particle-enter-delay, 0s),
     border-color 0.22s ease,
     box-shadow 0.22s ease;
   pointer-events: auto;
@@ -2942,7 +2943,7 @@ html.is-title-gate-scrolling {
 
 .memory-particle-layer .memory-particle.is-leaving {
   opacity: 0;
-  transition-delay: var(--particle-exit-delay, 0s), 0s, 0s;
+  transition-delay: var(--particle-exit-delay, 0s), var(--particle-exit-delay, 0s), 0s, 0s;
   pointer-events: none;
 }
 
@@ -2958,6 +2959,7 @@ html.is-title-gate-scrolling {
   -webkit-font-smoothing: antialiased;
   line-height: 1.16;
   letter-spacing: 0.028em;
+  filter: blur(2.5px);
 }
 
 .prompt-memory figcaption {
@@ -2977,16 +2979,36 @@ html.is-title-gate-scrolling {
   font-size: clamp(0.94rem, 1.08vw, 1.18rem);
 }
 
+.prompt-word {
+  display: inline-block;
+}
+
 .prompt-word.is-keyword {
   color: var(--red-hot);
 }
 
 .prompt-word.is-buffer {
-  opacity: 0.28;
+  opacity: 1;
+}
+
+.prompt-word.is-fade-start {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 100%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 100%);
+}
+
+.prompt-word.is-fade-end {
+  -webkit-mask-image: linear-gradient(to right, #000 0%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 0%, transparent 100%);
 }
 
 .memory-particle-layer .prompt-memory.is-visible {
   opacity: 1;
+  filter: blur(0);
+}
+
+.memory-particle-layer .prompt-memory.is-visible.is-leaving {
+  opacity: 0;
+  filter: blur(2.5px);
 }
 
 .memory-particle-layer .memory-orb::before {

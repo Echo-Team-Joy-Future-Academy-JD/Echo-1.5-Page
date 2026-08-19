@@ -840,8 +840,12 @@ const initMemoryParticleDemo = (demo) => {
         const token = document.createElement("span");
         token.className = "prompt-word";
         if (highlightPattern.test(normalizedWord)) token.classList.add("is-keyword");
-        if (wordIndex === 0 && memory.text?.fadeStart) token.classList.add("is-buffer");
-        if (wordIndex === words.length - 1 && memory.text?.fadeEnd) token.classList.add("is-buffer");
+        if (wordIndex === 0 && memory.text?.fadeStart) {
+          token.classList.add("is-buffer", "is-fade-start");
+        }
+        if (wordIndex === words.length - 1 && memory.text?.fadeEnd) {
+          token.classList.add("is-buffer", "is-fade-end");
+        }
         token.textContent = word;
         copy.append(token);
         if (wordIndex < words.length - 1) copy.append(document.createTextNode(" "));
@@ -929,7 +933,11 @@ const initMemoryParticleDemo = (demo) => {
       }
 
       particles.push(particle);
-      window.requestAnimationFrame(() => element.classList.add("is-visible"));
+      // Two frames guarantee the browser paints the transparent start state
+      // before transitioning the particle into view.
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => element.classList.add("is-visible"));
+      });
     });
 
     window.dispatchEvent(

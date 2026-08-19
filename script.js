@@ -45,6 +45,64 @@ let titleOverlayOpen = false;
 let titleOverlayProgress = 0;
 let titleOverlayAnimationFrame = null;
 let titleOverlayAnimating = false;
+let introInputLocked = false;
+let introInputSource = null;
+let introWheelLastInputAt = 0;
+let introWheelReleaseTimer = null;
+let introTransitionCompletedAt = 0;
+let introTouchActive = false;
+let introKeyHeld = false;
+
+const INTRO_WHEEL_QUIET_MS = 180;
+const INTRO_WHEEL_SETTLE_GUARD_MS = 280;
+
+function releaseIntroInputWhenReady() {
+  if (!introInputLocked || titleOverlayAnimating) return;
+
+  if (introInputSource === "wheel") {
+    const quietFor = performance.now() - introWheelLastInputAt;
+    const settledFor = performance.now() - introTransitionCompletedAt;
+    const quietRemaining = INTRO_WHEEL_QUIET_MS - quietFor;
+    const settleRemaining = INTRO_WHEEL_SETTLE_GUARD_MS - settledFor;
+    const releaseDelay = Math.max(quietRemaining, settleRemaining);
+    if (releaseDelay > 0) {
+      window.clearTimeout(introWheelReleaseTimer);
+      introWheelReleaseTimer = window.setTimeout(
+        releaseIntroInputWhenReady,
+        releaseDelay,
+      );
+      return;
+    }
+  } else if (introInputSource === "touch" && introTouchActive) {
+    return;
+  } else if (introInputSource === "key" && introKeyHeld) {
+    return;
+  }
+
+  window.clearTimeout(introWheelReleaseTimer);
+  introWheelReleaseTimer = null;
+  introInputLocked = false;
+  introInputSource = null;
+}
+
+function lockIntroInput(source) {
+  introInputLocked = true;
+  introInputSource = source;
+  introTransitionCompletedAt = 0;
+  if (source === "wheel") {
+    introWheelLastInputAt = performance.now();
+    releaseIntroInputWhenReady();
+  }
+}
+
+function registerLockedWheelInput() {
+  introWheelLastInputAt = performance.now();
+  window.clearTimeout(introWheelReleaseTimer);
+  introWheelReleaseTimer = window.setTimeout(
+    releaseIntroInputWhenReady,
+    INTRO_WHEEL_QUIET_MS,
+  );
+}
 
 function renderIntro() {
   const scrollable = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
@@ -161,7 +219,9 @@ function animateTitleOverlay(open) {
   if (prefersReducedMotion || distance < 0.001) {
     titleOverlayProgress = target;
     titleOverlayAnimating = false;
+    introTransitionCompletedAt = performance.now();
     renderIntro();
+    releaseIntroInputWhenReady();
     return;
   }
 
@@ -179,7 +239,9 @@ function animateTitleOverlay(open) {
     titleOverlayProgress = target;
     titleOverlayAnimating = false;
     titleOverlayAnimationFrame = null;
+    introTransitionCompletedAt = performance.now();
     renderIntro();
+    releaseIntroInputWhenReady();
   };
   titleOverlayAnimationFrame = window.requestAnimationFrame(step);
 }
@@ -187,28 +249,37 @@ function animateTitleOverlay(open) {
 if (introStage) {
   document.body.classList.add("intro-ready");
   renderIntro();
-  window.addEventListener("scroll", scheduleIntro, { passive: true });
+  window.addEventListener("scroll", () => {
+    if (introInputLocked && window.scrollY !== introStage.offsetTop) {
+      window.scrollTo(0, introStage.offsetTop);
+    }
+    scheduleIntro();
+  }, { passive: true });
   window.addEventListener("resize", renderIntro);
 
   window.addEventListener("wheel", (event) => {
-    if (event.ctrlKey || Math.abs(event.deltaY) < 2) return;
+    if (event.ctrlKey || event.deltaY === 0) return;
     const atCover = window.scrollY <= introStage.offsetTop + 2;
     if (!atCover) return;
-    if (titleOverlayAnimating) {
+    if (introInputLocked) {
       event.preventDefault();
+      if (introInputSource === "wheel") registerLockedWheelInput();
       return;
     }
     if (event.deltaY > 0 && !titleOverlayOpen) {
       event.preventDefault();
+      lockIntroInput("wheel");
       animateTitleOverlay(true);
     } else if (event.deltaY < 0 && titleOverlayOpen) {
       event.preventDefault();
+      lockIntroInput("wheel");
       animateTitleOverlay(false);
     }
   }, { passive: false });
 
   let introTouchY = null;
   window.addEventListener("touchstart", (event) => {
+    introTouchActive = true;
     introTouchY = event.touches[0]?.clientY ?? null;
   }, { passive: true });
   window.addEventListener("touchmove", (event) => {
@@ -216,26 +287,33 @@ if (introStage) {
     const nextY = event.touches[0]?.clientY;
     if (!Number.isFinite(nextY)) return;
     const delta = introTouchY - nextY;
-    if (Math.abs(delta) < 12) return;
-    if (titleOverlayAnimating) {
+    if (introInputLocked) {
       event.preventDefault();
       introTouchY = nextY;
       return;
     }
-    if (delta > 0 && !titleOverlayOpen) {
-      event.preventDefault();
+    const opens = delta > 0 && !titleOverlayOpen;
+    const closes = delta < 0 && titleOverlayOpen;
+    if (opens || closes) event.preventDefault();
+    if (Math.abs(delta) < 12) return;
+    if (opens) {
+      lockIntroInput("touch");
       animateTitleOverlay(true);
-    } else if (delta < 0 && titleOverlayOpen) {
-      event.preventDefault();
+    } else if (closes) {
+      lockIntroInput("touch");
       animateTitleOverlay(false);
     }
     introTouchY = nextY;
   }, { passive: false });
   window.addEventListener("touchend", () => {
+    introTouchActive = false;
     introTouchY = null;
+    releaseIntroInputWhenReady();
   }, { passive: true });
   window.addEventListener("touchcancel", () => {
+    introTouchActive = false;
     introTouchY = null;
+    releaseIntroInputWhenReady();
   }, { passive: true });
 
   window.addEventListener("keydown", (event) => {
@@ -243,17 +321,26 @@ if (introStage) {
     if (window.scrollY > introStage.offsetTop + 2) return;
     const opens = ["ArrowDown", "PageDown", " "].includes(event.key);
     const closes = ["ArrowUp", "PageUp"].includes(event.key);
-    if (titleOverlayAnimating && (opens || closes)) {
+    if (introInputLocked && (opens || closes)) {
       event.preventDefault();
       return;
     }
     if (opens && !titleOverlayOpen) {
       event.preventDefault();
+      introKeyHeld = true;
+      lockIntroInput("key");
       animateTitleOverlay(true);
     } else if (closes && titleOverlayOpen) {
       event.preventDefault();
+      introKeyHeld = true;
+      lockIntroInput("key");
       animateTitleOverlay(false);
     }
+  });
+  window.addEventListener("keyup", (event) => {
+    if (!["ArrowDown", "PageDown", " ", "ArrowUp", "PageUp"].includes(event.key)) return;
+    introKeyHeld = false;
+    releaseIntroInputWhenReady();
   });
 }
 

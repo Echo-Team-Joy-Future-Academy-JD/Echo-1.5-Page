@@ -112,7 +112,7 @@ function renderIntro() {
   if (!introStage) return;
 
   const localScroll = Math.max(window.scrollY - introStage.offsetTop, 0);
-  const distance = Math.max(introStage.offsetHeight - window.innerHeight, 1);
+  const distance = Math.max(window.innerHeight * 0.72, 1);
   const progress = clamp(localScroll / distance, 0, 1);
   if (localScroll > 2 && !titleOverlayOpen && !titleOverlayAnimating) {
     titleOverlayOpen = true;

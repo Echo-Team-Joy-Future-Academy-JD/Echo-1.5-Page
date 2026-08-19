@@ -833,17 +833,19 @@ const initMemoryParticleDemo = (demo) => {
       const label = document.createElement("figcaption");
       const copy = document.createElement("p");
       const text = memory.text?.text || "";
-      const highlightPattern = /(\b(?:ID_[A-Z]+|PREVIOUS_SHOT|CONDITION_IMAGE)\b|[\"“][^\"”]+[\"”]|\b(?:close-up|wide view|wide shot|camera|tracking shot|pushes? in|pulls? back|dolly|pans?|tilts?|cut to|over-the-shoulder|says?|asks?|whispers?|replies?|shouts?|turns?|opens?|holds?|hands?|enters?|reveals?|looks?|walks?|runs?)\b)/gi;
-      let cursor = 0;
-      text.replace(highlightPattern, (match, _capture, offset) => {
-        if (offset > cursor) copy.append(document.createTextNode(text.slice(cursor, offset)));
-        const highlight = document.createElement("strong");
-        highlight.textContent = match;
-        copy.append(highlight);
-        cursor = offset + match.length;
-        return match;
+      const highlightPattern = /^(?:ID_[A-Z]+(?:['’]s)?|PREVIOUS_SHOT|CONDITION_IMAGE|close-up|wide|camera|tracking|push(?:es)?|pull(?:s)?|dolly|pan(?:s)?|tilt(?:s)?|cut|over-the-shoulder|says?|asks?|whispers?|replies?|shouts?|turns?|opens?|holds?|hands?|enters?|reveals?|looks?|walks?|runs?)$/i;
+      const words = text.match(/\S+/g) || [];
+      words.forEach((word, wordIndex) => {
+        const normalizedWord = word.replace(/^[\"“'‘(]+|[\"”'’),.;:!?]+$/g, "");
+        const token = document.createElement("span");
+        token.className = "prompt-word";
+        if (highlightPattern.test(normalizedWord)) token.classList.add("is-keyword");
+        if (wordIndex === 0 && memory.text?.fadeStart) token.classList.add("is-buffer");
+        if (wordIndex === words.length - 1 && memory.text?.fadeEnd) token.classList.add("is-buffer");
+        token.textContent = word;
+        copy.append(token);
+        if (wordIndex < words.length - 1) copy.append(document.createTextNode(" "));
       });
-      if (cursor < text.length) copy.append(document.createTextNode(text.slice(cursor)));
       label.textContent = memory.text?.label || "Prompt memory";
       element.setAttribute("aria-label", `${label.textContent}: ${text}`);
       element.append(label, copy);

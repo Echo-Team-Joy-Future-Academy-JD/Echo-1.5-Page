@@ -106,18 +106,39 @@ const promptSnippetsFromRequests = (requests, shotId) => {
     return score;
   };
 
+  const anchorPattern = /^(?:ID_[A-Z]+|PREVIOUS_SHOT|CONDITION_IMAGE|close-up|camera|tracking|push(?:es)?|pull(?:s)?|dolly|pan(?:s)?|tilt(?:s)?|cut|says?|asks?|whispers?|replies?|shouts?|turns?|opens?|holds?|hands?|enters?|reveals?|looks?|walks?|runs?)\b/i;
+
+  const extractPhrase = (sentence) => {
+    const words = sentence.match(/\S+/g) || [];
+    if (words.length <= 7) {
+      return { text: words.join(" "), fadeStart: false, fadeEnd: false };
+    }
+
+    const anchorIndex = words.findIndex((word) => (
+      anchorPattern.test(word.replace(/^[\"“'‘(]+|[\"”'’),.;:!?]+$/g, ""))
+      || /[\"“”]/.test(word)
+    ));
+    const focusIndex = anchorIndex >= 0 ? anchorIndex : Math.floor(words.length / 2);
+    const start = Math.max(0, Math.min(focusIndex - 3, words.length - 7));
+    const end = Math.min(words.length, start + 7);
+
+    return {
+      text: words.slice(start, end).join(" "),
+      fadeStart: start > 0,
+      fadeEnd: end < words.length,
+    };
+  };
+
   return uniqueSentences
     .map((text, sourceIndex) => ({ text, sourceIndex, score: scoreSentence(text) }))
     .sort((a, b) => b.score - a.score || a.sourceIndex - b.sourceIndex)
     .slice(0, 2)
     .sort((a, b) => a.sourceIndex - b.sourceIndex)
     .map(({ text }, snippetIndex) => {
-      const clipped = text.length > 190
-        ? `${text.slice(0, 186).replace(/\s+\S*$/, "")}…`
-        : text;
+      const phrase = extractPhrase(text);
       return {
         id: `${shotId}-prompt-${String(snippetIndex + 1).padStart(2, "0")}`,
-        text: clipped,
+        ...phrase,
         label: `Prompt · ${shotId}`,
       };
     });

@@ -2947,15 +2947,17 @@ html.is-title-gate-scrolling {
 }
 
 .memory-particle-layer .prompt-memory {
-  width: clamp(180px, 15vw, 238px);
+  width: clamp(150px, 13vw, 205px);
   color: rgba(255, 255, 255, 0.9);
   text-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.96),
-    0 3px 18px rgba(0, 0, 0, 0.9);
+    0 1px 1px rgba(0, 0, 0, 0.9),
+    0 3px 14px rgba(0, 0, 0, 0.76);
   font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 300;
-  line-height: 1.2;
-  letter-spacing: 0.02em;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.16;
+  letter-spacing: 0.028em;
 }
 
 .prompt-memory figcaption {
@@ -2972,12 +2974,15 @@ html.is-title-gate-scrolling {
 
 .prompt-memory p {
   margin: 0;
-  font-size: clamp(0.98rem, 1.16vw, 1.28rem);
+  font-size: clamp(0.94rem, 1.08vw, 1.18rem);
 }
 
-.prompt-memory strong {
+.prompt-word.is-keyword {
   color: var(--red-hot);
-  font-weight: 600;
+}
+
+.prompt-word.is-buffer {
+  opacity: 0.28;
 }
 
 .memory-particle-layer .prompt-memory.is-visible {
@@ -3021,11 +3026,11 @@ html.is-title-gate-scrolling {
   }
 
   .memory-particle-layer .prompt-memory {
-    width: 156px;
+    width: 142px;
   }
 
   .prompt-memory p {
-    font-size: 0.92rem;
+    font-size: 0.88rem;
   }
 }
 

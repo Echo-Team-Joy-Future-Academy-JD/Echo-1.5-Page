@@ -977,14 +977,16 @@ const initMemoryParticleDemo = (demo) => {
 
       const shape = measureParticleCapsule(element);
       const position = positionOutsideVideo(shape);
+      const motionScale = memory.metadata?.isConditionImage ? 0.4 : 1;
       const particle = {
         element,
         memory,
+        motionScale,
         ...shape,
         x: position.x,
         y: position.y,
-        vx: randomBetween(-0.12, 0.12),
-        vy: randomBetween(-0.12, 0.12),
+        vx: randomBetween(-0.12, 0.12) * motionScale,
+        vy: randomBetween(-0.12, 0.12) * motionScale,
         ax: 0,
         ay: 0,
         mass: randomBetween(1.35, 1.9),
@@ -1150,17 +1152,19 @@ const initMemoryParticleDemo = (demo) => {
         forceY -= (particle.y - (metrics.height - edgeY)) * 0.014;
       }
 
-      const targetAccelerationX = forceX / particle.mass;
-      const targetAccelerationY = forceY / particle.mass;
+      const targetAccelerationX = (forceX / particle.mass) * particle.motionScale;
+      const targetAccelerationY = (forceY / particle.mass) * particle.motionScale;
       const accelerationResponse = 1 - Math.pow(0.88, delta);
       particle.ax += (targetAccelerationX - particle.ax) * accelerationResponse;
       particle.ay += (targetAccelerationY - particle.ay) * accelerationResponse;
-      particle.vx = (particle.vx + particle.ax * delta) * Math.pow(0.993, delta);
-      particle.vy = (particle.vy + particle.ay * delta) * Math.pow(0.993, delta);
+      const damping = particle.motionScale < 1 ? 0.982 : 0.993;
+      particle.vx = (particle.vx + particle.ax * delta) * Math.pow(damping, delta);
+      particle.vy = (particle.vy + particle.ay * delta) * Math.pow(damping, delta);
       const speed = Math.hypot(particle.vx, particle.vy);
-      if (speed > 1.35) {
-        particle.vx = (particle.vx / speed) * 1.35;
-        particle.vy = (particle.vy / speed) * 1.35;
+      const maxSpeed = 1.35 * particle.motionScale;
+      if (speed > maxSpeed) {
+        particle.vx = (particle.vx / speed) * maxSpeed;
+        particle.vy = (particle.vy / speed) * maxSpeed;
       }
       particle.x += particle.vx * delta;
       particle.y += particle.vy * delta;
@@ -1260,6 +1264,7 @@ const initMemoryParticleDemo = (demo) => {
         capsuleRadius: particle.radius,
         capsuleSegmentHalf: particle.segmentHalf,
         collisionShape: "capsule",
+        motionScale: particle.motionScale,
         retiring: particle.retiring,
       }));
     },

@@ -3166,6 +3166,11 @@ html.is-title-gate-scrolling {
   pointer-events: none;
 }
 
+.memory-stage-only.is-condition-hidden [data-condition-image] {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
 .memory-particle-layer .prompt-memory {
   width: max-content;
   max-width: none;

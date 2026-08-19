@@ -467,6 +467,7 @@ const initMemoryParticleDemo = (demo) => {
   let progressTrackStart = 0;
   let progressTrackWidth = 0;
   let conditionVisible = true;
+  demo.dataset.conditionVisible = "true";
   const progressTicks = [];
   const isCompactGlow = window.matchMedia("(max-width: 560px)").matches;
   const ambientGlow = video
@@ -1050,23 +1051,12 @@ const initMemoryParticleDemo = (demo) => {
   });
 
   conditionToggle?.addEventListener("click", () => {
-    conditionVisible = !conditionVisible;
-    setToggleState(conditionToggle, conditionVisible);
-    if (conditionVisible) {
-      loadShotMemoryList(currentShot);
-      return;
-    }
-    particles
-      .filter((particle) => particle.memory.metadata?.isConditionImage && !particle.retiring)
-      .forEach((particle) => {
-        particle.retiring = true;
-        particle.element.style.setProperty("--particle-exit-delay", "0s");
-        particle.element.classList.add("is-leaving");
-        window.setTimeout(() => {
-          particle.removed = true;
-          particle.element.remove();
-        }, 1100);
-      });
+    window.dispatchEvent(new CustomEvent("echo:condition-visibility", {
+      detail: {
+        enabled: !conditionVisible,
+        source: "popcorn-control",
+      },
+    }));
   });
 
   document.addEventListener("pointerdown", (event) => {
@@ -1279,6 +1269,40 @@ const initMemoryParticleDemo = (demo) => {
       }),
     );
   };
+
+  window.addEventListener("echo:condition-visibility", (event) => {
+    const enabled = Boolean(event.detail?.enabled);
+    if (enabled === conditionVisible) return;
+
+    conditionVisible = enabled;
+    setToggleState(conditionToggle, conditionVisible);
+    demo.dataset.conditionVisible = String(conditionVisible);
+    demo.classList.toggle("is-condition-hidden", !conditionVisible);
+
+    if (conditionVisible) {
+      if (currentShot >= 0) loadShotMemoryList(currentShot);
+    } else {
+      particles
+        .filter((particle) => particle.memory.metadata?.isConditionImage && !particle.retiring)
+        .forEach((particle) => {
+          particle.retiring = true;
+          particle.element.style.setProperty("--particle-exit-delay", "0s");
+          particle.element.classList.add("is-leaving");
+          window.setTimeout(() => {
+            particle.removed = true;
+            particle.element.remove();
+          }, 1100);
+        });
+    }
+
+    window.dispatchEvent(new CustomEvent("echo:condition-visibility-changed", {
+      detail: {
+        enabled: conditionVisible,
+        source: event.detail?.source || "external",
+        shotIndex: currentShot,
+      },
+    }));
+  });
 
   const updateShot = async () => {
     if (!video || !Number.isFinite(video.currentTime)) return;

@@ -1,0 +1,23 @@
+{
+  "name": "echo-1-5-project-page",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "prepare:memory-case": "node scripts/prepare-memory-case.mjs",
+    "preview": "vite preview",
+    "start": "vite preview",
+    "test": "npm run build"
+  },
+  "devDependencies": {
+    "vite": "8.0.13"
+  },
+  "type": "module",
+  "dependencies": {
+    "video-ambient-glow": "^1.2.6"
+  }
+}

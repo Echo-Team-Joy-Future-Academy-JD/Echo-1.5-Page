@@ -938,12 +938,16 @@ const initMemoryParticleDemo = (demo) => {
   const burstPopcorn = () => {
     if (!memoryControls || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const fragment = document.createDocumentFragment();
-    const trajectories = [
-      { landX: -124, lift: 78 },
-      { landX: -64, lift: 108 },
-      { landX: 18, lift: 116 },
-      { landX: 68, lift: 86 },
-    ];
+    const horizontalLanes = [
+      randomBetween(-148, -102),
+      randomBetween(-96, -42),
+      randomBetween(28, 76),
+      randomBetween(82, 132),
+    ].sort(() => Math.random() - 0.5);
+    const trajectories = horizontalLanes.map((landX) => ({
+      landX,
+      lift: randomBetween(76, 124),
+    }));
     const kernels = [];
     trajectories.forEach((trajectory, index) => {
       const kernel = document.createElement("span");
@@ -957,40 +961,70 @@ const initMemoryParticleDemo = (demo) => {
       kernels.push({
         kernel,
         delay: index * 14,
-        landX: trajectory.landX + randomBetween(-7, 7),
-        groundY: randomBetween(29, 35),
-        lift: trajectory.lift + randomBetween(-5, 5),
+        landX: trajectory.landX,
+        lift: trajectory.lift,
         rotation,
       });
     });
     memoryControls.append(fragment);
-    kernels.forEach(({ kernel, delay, landX, groundY, lift, rotation }) => {
+    const popcornBottom = popcornControl
+      ?.querySelector("svg")
+      ?.getBoundingClientRect().bottom;
+    kernels.forEach(({ kernel, delay, landX, lift, rotation }) => {
+      const kernelBottom = kernel.getBoundingClientRect().bottom;
+      const groundY = Number.isFinite(popcornBottom)
+        ? popcornBottom - kernelBottom
+        : 24;
+      const flightDuration = 680;
+      const bounceDuration = 280;
+      const motionDuration = flightDuration + bounceDuration;
+      const landingOffset = flightDuration / motionDuration;
       const frames = Array.from({ length: 21 }, (_, frameIndex) => {
         const progress = frameIndex / 20;
         const x = landX * progress;
         const y = -4 * lift * progress * (1 - progress) + groundY * progress;
         const opacity = progress < 0.08 ? progress / 0.08 : 1;
         const scale = 0.5 + Math.min(progress / 0.18, 1) * 0.5;
+        const flightRotation = rotation * progress;
         return {
-          offset: progress,
+          offset: progress * landingOffset,
           opacity: Math.max(0, opacity),
-          transform: `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) rotate(${(rotation * progress).toFixed(1)}deg) scale(${scale.toFixed(3)})`,
+          transform: `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) rotate(${flightRotation.toFixed(1)}deg) scale(${scale.toFixed(3)})`,
         };
       });
+      const bounceRotation = rotation + randomBetween(-24, 24);
+      const bounceHeight = randomBetween(10, 17);
+      frames.push(
+        {
+          offset: landingOffset,
+          opacity: 1,
+          transform: `translate3d(${landX.toFixed(2)}px, ${groundY.toFixed(2)}px, 0) rotate(${rotation.toFixed(1)}deg) scale(1, 0.82)`,
+        },
+        {
+          offset: landingOffset + (1 - landingOffset) * 0.42,
+          opacity: 1,
+          transform: `translate3d(${landX.toFixed(2)}px, ${(groundY - bounceHeight).toFixed(2)}px, 0) rotate(${bounceRotation.toFixed(1)}deg) scale(0.96, 1.04)`,
+        },
+        {
+          offset: 1,
+          opacity: 1,
+          transform: `translate3d(${landX.toFixed(2)}px, ${groundY.toFixed(2)}px, 0) rotate(${bounceRotation.toFixed(1)}deg) scale(1)`,
+        },
+      );
       kernel.animate(frames, {
-        duration: 680,
+        duration: motionDuration,
         delay,
         easing: "linear",
         fill: "forwards",
       });
-      const landingTime = 680 + delay;
+      const settledTime = motionDuration + delay;
       window.setTimeout(() => {
         kernel.animate(
           [{ opacity: 1 }, { opacity: 0 }],
           { duration: 260, easing: "ease-out", fill: "forwards" },
         );
-      }, landingTime + 1500);
-      window.setTimeout(() => kernel.remove(), landingTime + 1760);
+      }, settledTime + 1500);
+      window.setTimeout(() => kernel.remove(), settledTime + 1760);
     });
     popcornControl?.classList.remove("is-popping");
     window.requestAnimationFrame(() => popcornControl?.classList.add("is-popping"));

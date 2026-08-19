@@ -50,8 +50,8 @@ function renderIntro() {
 
   const distance = Math.max(introStage.offsetHeight - window.innerHeight, 1);
   const progress = clamp((window.scrollY - introStage.offsetTop) / distance, 0, 1);
-  const scatter = smoothStep(clamp((progress - 0.18) / 0.32, 0, 1));
-  const nextProgress = clamp((progress - 0.18) / 0.64, 0, 1);
+  const scatter = smoothStep(clamp((progress - 0.12) / 0.42, 0, 1));
+  const nextProgress = clamp((progress - 0.12) / 0.76, 0, 1);
   const next = prefersReducedMotion
     ? (progress > 0.5 ? 1 : 0)
     : smoothStep(nextProgress);
@@ -131,184 +131,6 @@ if (introStage) {
   renderIntro();
   window.addEventListener("scroll", scheduleIntro, { passive: true });
   window.addEventListener("resize", renderIntro);
-}
-
-if (introStage) {
-  let titleGateLocked = false;
-  let titleGatePassed = false;
-  let titleGateArrived = false;
-  let titleGateReleaseReady = false;
-  let titleGateIdleTimer = null;
-  let titleGateAnimationFrame = null;
-  let titleGateAnimating = false;
-
-  const getTitleGate = () => {
-    const distance = Math.max(introStage.offsetHeight - window.innerHeight, 1);
-    return {
-      start: introStage.offsetTop + distance * 0.5,
-      target: introStage.offsetTop + distance * 0.86,
-    };
-  };
-
-  const scheduleTitleGateRelease = () => {
-    if (!titleGateArrived) return;
-    titleGateReleaseReady = false;
-    window.clearTimeout(titleGateIdleTimer);
-    titleGateIdleTimer = window.setTimeout(() => {
-      titleGateReleaseReady = true;
-    }, 140);
-  };
-
-  const stopTitleGateAnimation = () => {
-    if (titleGateAnimationFrame) {
-      window.cancelAnimationFrame(titleGateAnimationFrame);
-      titleGateAnimationFrame = null;
-    }
-    titleGateAnimating = false;
-    document.documentElement.classList.remove("is-title-gate-scrolling");
-  };
-
-  const animateToTitlePage = (target) => {
-    stopTitleGateAnimation();
-    const startY = window.scrollY;
-    const distance = target - startY;
-    const duration = prefersReducedMotion ? 0 : 820;
-
-    if (!duration || Math.abs(distance) < 1) {
-      window.scrollTo(0, target);
-      titleGateArrived = true;
-      scheduleTitleGateRelease();
-      return;
-    }
-
-    titleGateAnimating = true;
-    document.documentElement.classList.add("is-title-gate-scrolling");
-    const startedAt = performance.now();
-
-    const step = (time) => {
-      const progress = clamp((time - startedAt) / duration, 0, 1);
-      const eased = smoothStep(progress);
-      window.scrollTo(0, startY + distance * eased);
-
-      if (progress < 1) {
-        titleGateAnimationFrame = window.requestAnimationFrame(step);
-        return;
-      }
-
-      window.scrollTo(0, target);
-      titleGateAnimationFrame = null;
-      titleGateAnimating = false;
-      document.documentElement.classList.remove("is-title-gate-scrolling");
-      titleGateArrived = true;
-      scheduleTitleGateRelease();
-    };
-
-    titleGateAnimationFrame = window.requestAnimationFrame(step);
-  };
-
-  const holdOnTitlePage = () => {
-    const { target } = getTitleGate();
-    titleGateLocked = true;
-    titleGateArrived = false;
-    titleGateReleaseReady = false;
-    introStage.classList.add("is-title-held");
-    animateToTitlePage(target);
-  };
-
-  const releaseTitleGate = () => {
-    stopTitleGateAnimation();
-    titleGateLocked = false;
-    titleGatePassed = true;
-    titleGateArrived = true;
-    titleGateReleaseReady = false;
-    introStage.classList.remove("is-title-held");
-    window.clearTimeout(titleGateIdleTimer);
-  };
-
-  const resetTitleGate = () => {
-    titleGateLocked = false;
-    titleGatePassed = false;
-    titleGateArrived = false;
-    titleGateReleaseReady = false;
-    introStage.classList.remove("is-title-held");
-    window.clearTimeout(titleGateIdleTimer);
-    stopTitleGateAnimation();
-  };
-
-  const initialGate = getTitleGate();
-  titleGatePassed = window.scrollY > initialGate.target + 36;
-
-  window.addEventListener("wheel", (event) => {
-    if (event.ctrlKey) return;
-    if (event.deltaY < 0) {
-      if (titleGateLocked) resetTitleGate();
-      return;
-    }
-    if (event.deltaY === 0) return;
-    const { start, target } = getTitleGate();
-
-    if (!titleGateLocked && window.scrollY < start - 96) {
-      resetTitleGate();
-    }
-    if (titleGatePassed) return;
-
-    if (titleGateLocked) {
-      if (titleGateReleaseReady && event.deltaY >= 36) {
-        releaseTitleGate();
-        return;
-      }
-      event.preventDefault();
-      if (titleGateArrived && !titleGateReleaseReady) scheduleTitleGateRelease();
-      return;
-    }
-
-    const projectedScroll = window.scrollY + Math.max(event.deltaY, 0);
-    if (window.scrollY >= start || projectedScroll >= start) {
-      event.preventDefault();
-      holdOnTitlePage();
-      if (Math.abs(window.scrollY - target) > 1) scheduleIntro();
-    }
-  }, { passive: false });
-
-  window.addEventListener("scroll", () => {
-    const { start, target } = getTitleGate();
-    if (!titleGateLocked && window.scrollY < start - 96 && titleGatePassed) {
-      resetTitleGate();
-      return;
-    }
-    if (titleGateLocked && !titleGateAnimating && window.scrollY > target + 1) {
-      window.scrollTo({ top: target, behavior: "instant" });
-      return;
-    }
-    if (titleGateLocked && !titleGateAnimating && Math.abs(window.scrollY - target) <= 1.5) {
-      if (!titleGateArrived) titleGateArrived = true;
-      scheduleTitleGateRelease();
-    }
-  }, { passive: true });
-
-  document.addEventListener("click", (event) => {
-    const link = event.target.closest?.('a[href^="#"]');
-    if (!link) return;
-    const href = link.getAttribute("href");
-    if (!href || href === "#") return;
-    const target = document.querySelector(href);
-    if (target && !introStage.contains(target)) releaseTitleGate();
-  }, { capture: true });
-
-  window.addEventListener("keydown", (event) => {
-    if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey) return;
-    const downKeys = ["ArrowDown", "PageDown", " ", "End"];
-    if (!downKeys.includes(event.key) || titleGatePassed) return;
-    const { start } = getTitleGate();
-    const projectedScroll = window.scrollY + window.innerHeight * 0.82;
-    if (window.scrollY < start && projectedScroll < start) return;
-    if (titleGateLocked && titleGateReleaseReady) {
-      releaseTitleGate();
-      return;
-    }
-    event.preventDefault();
-    holdOnTitlePage();
-  });
 }
 
 if (!prefersReducedMotion) {
@@ -456,7 +278,7 @@ const initMemoryParticleDemo = (demo) => {
   let introPageVisible = introStage
     ? introStage.getBoundingClientRect().bottom > 0
     : true;
-  let transitionPaused = !introPageVisible;
+  let titleModeActive = introStage?.classList.contains("is-next-visible") ?? false;
   let pageHasFocus = document.visibilityState === "visible";
   let progressFocusState = null;
   let playbackActiveState = null;
@@ -636,7 +458,7 @@ const initMemoryParticleDemo = (demo) => {
       }
     }
 
-    const shouldPlay = introPageVisible && pageHasFocus && !transitionPaused;
+    const shouldPlay = introPageVisible && pageHasFocus;
     if (shouldPlay === playbackActiveState) return;
     playbackActiveState = shouldPlay;
 
@@ -692,10 +514,31 @@ const initMemoryParticleDemo = (demo) => {
 
   window.addEventListener("echo:intro-progress", (event) => {
     memoryPageActive = !event.detail?.nextSettled;
-    const progress = event.detail?.progress ?? 0;
-    introPageVisible = progress < 0.999;
-    if (progress > 0.995) transitionPaused = true;
-    if (progress < 0.985) transitionPaused = false;
+    introPageVisible = introStage
+      ? introStage.getBoundingClientRect().bottom > 0
+      : true;
+    const titleMode = Boolean(event.detail?.nextVisible);
+
+    if (titleMode && !titleModeActive) {
+      titleModeActive = true;
+      closeMemoryControls();
+      stopAudioPreview();
+      video.muted = true;
+      setToggleState(soundToggle, false);
+      if (conditionVisible) {
+        window.dispatchEvent(new CustomEvent("echo:condition-visibility", {
+          detail: {
+            enabled: false,
+            source: "intro-title-transition",
+          },
+        }));
+      }
+      manuallyPaused = false;
+      playbackActiveState = null;
+      video.play().catch(() => {});
+    } else if (!titleMode && titleModeActive) {
+      titleModeActive = false;
+    }
     syncPlayerFocus();
   });
   window.addEventListener("focus", () => {

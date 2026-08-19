@@ -12,10 +12,6 @@
   --red-hot: #ff2638;
 }
 
-html.is-title-gate-scrolling {
-  scroll-behavior: auto !important;
-}
-
 .video-bg-page {
   background:
     radial-gradient(circle at 72% 8%, rgba(214, 31, 44, 0.12), transparent 28%),
@@ -2881,6 +2877,10 @@ html.is-title-gate-scrolling {
       rgba(0, 0, 0, 0.52)
     ),
     linear-gradient(0deg, rgba(0, 0, 0, 0.44), transparent 52%);
+}
+
+.intro-hero-stage.is-next-visible .memory-intro-stage {
+  opacity: max(var(--intro-memory-opacity, 0.4), 0.36);
 }
 
 .intro-hero-stage:not(.is-next-visible) .intro-next-hero .hero-actions,

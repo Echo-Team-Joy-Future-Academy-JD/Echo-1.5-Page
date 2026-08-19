@@ -475,6 +475,7 @@ const initMemoryParticleDemo = (demo) => {
   const controlsMenu = memoryControls?.querySelector(".memory-controls-menu");
   const soundToggle = memoryControls?.querySelector("[data-sound-toggle]");
   const conditionToggle = memoryControls?.querySelector("[data-condition-toggle]");
+  const popcornSpeech = memoryControls?.querySelector("[data-popcorn-speech]");
   const segmentDuration = memoryDemoConfig.shotDuration;
   const audioMemoryPlayer = new Audio();
   const particles = [];
@@ -500,6 +501,9 @@ const initMemoryParticleDemo = (demo) => {
   let progressTrackStart = 0;
   let progressTrackWidth = 0;
   let conditionVisible = true;
+  let popcornClickCount = 0;
+  let popcornExhausted = false;
+  let popcornSpeechTimer = null;
   demo.dataset.conditionVisible = "true";
   const progressTicks = [];
   const isCompactGlow = window.matchMedia("(max-width: 560px)").matches;
@@ -1084,8 +1088,28 @@ const initMemoryParticleDemo = (demo) => {
     window.setTimeout(() => popcornControl?.classList.remove("is-popping"), 420);
   };
 
+  const showPopcornSpeech = () => {
+    if (!popcornSpeech) return;
+    window.clearTimeout(popcornSpeechTimer);
+    popcornSpeech.classList.remove("is-speaking");
+    popcornSpeech.setAttribute("aria-hidden", "false");
+    void popcornSpeech.offsetWidth;
+    popcornSpeech.classList.add("is-speaking");
+    popcornSpeechTimer = window.setTimeout(() => {
+      popcornSpeech.classList.remove("is-speaking");
+      popcornSpeech.setAttribute("aria-hidden", "true");
+    }, 1900);
+  };
+
   popcornControl?.addEventListener("click", () => {
-    burstPopcorn();
+    popcornClickCount += 1;
+    if (!popcornExhausted && popcornClickCount > 50) {
+      popcornExhausted = true;
+      memoryControls.classList.add("is-exhausted");
+    }
+
+    if (popcornExhausted) showPopcornSpeech();
+    else burstPopcorn();
     const open = !memoryControls.classList.contains("is-open");
     memoryControls.classList.toggle("is-open", open);
     popcornControl.setAttribute("aria-expanded", String(open));

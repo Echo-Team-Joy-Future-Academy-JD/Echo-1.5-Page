@@ -2665,6 +2665,52 @@
   animation: popcornButtonPop 0.38s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.popcorn-speech {
+  position: absolute;
+  right: 55px;
+  bottom: 36px;
+  min-width: 92px;
+  padding: 7px 13px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px 999px 6px 999px;
+  background: rgba(5, 5, 5, 0.82);
+  color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(14px);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 0.95rem;
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate3d(8px, 5px, 0) scale(0.86);
+  transform-origin: right bottom;
+  pointer-events: none;
+}
+
+.popcorn-speech::after {
+  position: absolute;
+  right: -5px;
+  bottom: -1px;
+  width: 11px;
+  height: 11px;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(5, 5, 5, 0.82);
+  content: "";
+  transform: rotate(35deg) skew(-12deg, -12deg);
+}
+
+.popcorn-speech.is-speaking {
+  animation: popcornSpeech 1.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.memory-controls.is-exhausted .popcorn-kernels {
+  animation: none;
+}
+
 .popcorn-control:focus-visible {
   outline: 1px solid rgba(255, 74, 87, 0.72);
   outline-offset: 4px;
@@ -2832,6 +2878,12 @@
   32% { transform: translateY(2px) scale(0.82); }
   68% { transform: translateY(-5px) scale(1.14); }
   100% { transform: translateY(-2px) scale(1); }
+}
+
+@keyframes popcornSpeech {
+  0% { opacity: 0; transform: translate3d(8px, 5px, 0) scale(0.86); }
+  12%, 78% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  100% { opacity: 0; transform: translate3d(0, -3px, 0) scale(0.96); }
 }
 
 @media (max-width: 560px) {

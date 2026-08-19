@@ -2,13 +2,13 @@
  * Echo 1.5 long-case data contract.
  *
  * The bundled demo uses a precomputed static manifest:
- *   public/media/blue-beard/manifest.json
+ *   public/media/last-visa/manifest.json
  *
  * A production integration can still replace any method by defining
  * `window.ECHO_MEMORY_PROVIDER` before script.js executes.
  */
 
-const caseBaseUrl = new URL("./media/blue-beard/", document.baseURI);
+const caseBaseUrl = new URL("./media/last-visa/", document.baseURI);
 const manifestUrl = new URL("manifest.json", caseBaseUrl);
 let manifestPromise;
 
@@ -43,6 +43,13 @@ export const memoryDemoConfig = {
 };
 
 const defaultProvider = {
+  async getShotIndexAtTime({ time }) {
+    const manifest = await loadManifest();
+    const shots = manifest.shots || [];
+    const match = shots.findIndex((shot) => time >= shot.startTime && time < shot.endTime);
+    return match >= 0 ? match : Math.max(shots.length - 1, 0);
+  },
+
   async getShot({ shotIndex, startTime, endTime }) {
     const manifest = await loadManifest();
     return manifest.shots[shotIndex] || {
@@ -58,7 +65,7 @@ const defaultProvider = {
     const shot = manifest.shots[targetShotIndex];
     if (!shot) return [];
 
-    return shot.visualMemory.map((memory) => ({
+    return (shot.visualMemory || []).map((memory) => ({
       ...memory,
       src: resolveAsset(memory.src),
       metadata: {

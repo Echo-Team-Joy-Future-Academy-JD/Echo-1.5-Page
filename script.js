@@ -947,9 +947,9 @@ const initMemoryParticleDemo = (demo) => {
     );
   };
 
-  const updateShot = () => {
+  const updateShot = async () => {
     if (!video || !Number.isFinite(video.currentTime)) return;
-    const nextShot = Math.floor(video.currentTime / segmentDuration);
+    const nextShot = await provider.getShotIndexAtTime({ time: video.currentTime });
     if (nextShot !== currentShot) loadShotMemoryList(nextShot);
   };
 
@@ -1340,7 +1340,7 @@ if (memoryDemo?.dataset.renderer === "legacy") {
 
   const updateInference = async () => {
     if (!video || !Number.isFinite(video.currentTime)) return;
-    const nextShot = Math.floor(video.currentTime / segmentDuration);
+    const nextShot = await provider.getShotIndexAtTime({ time: video.currentTime });
 
     if (nextShot !== currentShot) {
       await beginShot(nextShot);

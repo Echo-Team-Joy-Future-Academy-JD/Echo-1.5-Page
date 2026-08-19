@@ -2979,11 +2979,7 @@ html.is-title-gate-scrolling {
 .prompt-memory p {
   margin: 0;
   white-space: nowrap;
-  font-size: clamp(
-    calc(0.94rem * var(--particle-scale, 1)),
-    calc(1.08vw * var(--particle-scale, 1)),
-    calc(1.18rem * var(--particle-scale, 1))
-  );
+  font-size: clamp(0.94rem, 1.08vw, 1.18rem);
 }
 
 .prompt-word {
@@ -3023,21 +3019,13 @@ html.is-title-gate-scrolling {
 }
 
 .memory-stage-only .memory-orb {
-  width: clamp(
-    calc(96px * var(--particle-scale, 1)),
-    calc(9vw * var(--particle-scale, 1)),
-    calc(142px * var(--particle-scale, 1))
-  );
+  width: clamp(96px, 9vw, 142px);
   line-height: 0;
 }
 
 .memory-stage-only .audio-orb {
   display: grid;
-  width: clamp(
-    calc(86px * var(--particle-scale, 1)),
-    calc(7.4vw * var(--particle-scale, 1)),
-    calc(116px * var(--particle-scale, 1))
-  );
+  width: clamp(86px, 7.4vw, 116px);
 }
 
 .memory-stage-only .audio-orb.has-memory:hover,
@@ -3054,12 +3042,12 @@ html.is-title-gate-scrolling {
   }
 
   .memory-stage-only .memory-orb {
-    width: calc(84px * var(--particle-scale, 1));
+    width: 84px;
   }
 
   .memory-stage-only .audio-orb {
     display: grid;
-    width: calc(76px * var(--particle-scale, 1));
+    width: 76px;
   }
 
   .memory-particle-layer .prompt-memory {
@@ -3067,7 +3055,7 @@ html.is-title-gate-scrolling {
   }
 
   .prompt-memory p {
-    font-size: calc(0.88rem * var(--particle-scale, 1));
+    font-size: 0.88rem;
   }
 }
 
@@ -3086,7 +3074,7 @@ html.is-title-gate-scrolling {
   }
 
   .memory-stage-only .memory-orb {
-    width: calc(66px * var(--particle-scale, 1));
+    width: 66px;
   }
 
   .memory-stage-only .audio-orb {

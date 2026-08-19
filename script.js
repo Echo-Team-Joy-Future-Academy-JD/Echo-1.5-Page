@@ -488,7 +488,6 @@ const initMemoryParticleDemo = (demo) => {
   audioMemoryPlayer.preload = "metadata";
 
   const randomBetween = (min, max) => min + Math.random() * (max - min);
-  const particleScales = [1, 1.25, 1.5];
   const videoDeadZone = 52;
 
   const buildPlaybackProgress = () => {
@@ -972,9 +971,6 @@ const initMemoryParticleDemo = (demo) => {
     memoryList.forEach((memory, index) => {
       const element = createParticleElement(memory, index);
       const delay = revealDelay.get(index) || 0;
-      const scale = particleScales[Math.floor(Math.random() * particleScales.length)];
-      element.style.setProperty("--particle-scale", scale.toFixed(2));
-      element.dataset.particleScale = scale.toFixed(2);
       element.style.setProperty("--particle-enter-delay", `${delay.toFixed(3)}s`);
       element.dataset.targetTick = delay.toFixed(3);
       particleLayer.append(element);
@@ -984,7 +980,6 @@ const initMemoryParticleDemo = (demo) => {
       const particle = {
         element,
         memory,
-        scale,
         ...shape,
         x: position.x,
         y: position.y,
@@ -1260,7 +1255,6 @@ const initMemoryParticleDemo = (demo) => {
         ax: particle.ax,
         ay: particle.ay,
         mass: particle.mass,
-        scale: particle.scale,
         width: particle.width,
         height: particle.height,
         capsuleRadius: particle.radius,

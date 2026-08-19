@@ -45,8 +45,6 @@ let titleOverlayOpen = false;
 let titleOverlayProgress = 0;
 let titleOverlayAnimationFrame = null;
 let titleOverlayAnimating = false;
-let coverGestureLatched = false;
-let coverGestureReleaseTimer = null;
 
 function renderIntro() {
   const scrollable = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
@@ -150,7 +148,7 @@ function scheduleIntro() {
 }
 
 function animateTitleOverlay(open) {
-  if (!introStage) return;
+  if (!introStage || titleOverlayAnimating) return;
   titleOverlayOpen = open;
   if (titleOverlayAnimationFrame) {
     window.cancelAnimationFrame(titleOverlayAnimationFrame);
@@ -192,38 +190,20 @@ if (introStage) {
   window.addEventListener("scroll", scheduleIntro, { passive: true });
   window.addEventListener("resize", renderIntro);
 
-  const scheduleCoverGestureRelease = () => {
-    window.clearTimeout(coverGestureReleaseTimer);
-    coverGestureReleaseTimer = window.setTimeout(() => {
-      if (titleOverlayAnimating) {
-        scheduleCoverGestureRelease();
-        return;
-      }
-      coverGestureLatched = false;
-    }, 360);
-  };
-
   window.addEventListener("wheel", (event) => {
     if (event.ctrlKey || Math.abs(event.deltaY) < 2) return;
     const atCover = window.scrollY <= introStage.offsetTop + 2;
     if (!atCover) return;
-    if (coverGestureLatched) {
+    if (titleOverlayAnimating) {
       event.preventDefault();
-      scheduleCoverGestureRelease();
       return;
     }
     if (event.deltaY > 0 && !titleOverlayOpen) {
       event.preventDefault();
-      coverGestureLatched = true;
-      scheduleCoverGestureRelease();
       animateTitleOverlay(true);
     } else if (event.deltaY < 0 && titleOverlayOpen) {
       event.preventDefault();
-      coverGestureLatched = true;
-      scheduleCoverGestureRelease();
       animateTitleOverlay(false);
-    } else if (titleOverlayAnimating) {
-      event.preventDefault();
     }
   }, { passive: false });
 
@@ -237,25 +217,24 @@ if (introStage) {
     if (!Number.isFinite(nextY)) return;
     const delta = introTouchY - nextY;
     if (Math.abs(delta) < 12) return;
+    if (titleOverlayAnimating) {
+      event.preventDefault();
+      introTouchY = nextY;
+      return;
+    }
     if (delta > 0 && !titleOverlayOpen) {
       event.preventDefault();
-      coverGestureLatched = true;
       animateTitleOverlay(true);
     } else if (delta < 0 && titleOverlayOpen) {
       event.preventDefault();
-      coverGestureLatched = true;
       animateTitleOverlay(false);
-    } else if (coverGestureLatched) {
-      event.preventDefault();
     }
     introTouchY = nextY;
   }, { passive: false });
   window.addEventListener("touchend", () => {
-    coverGestureLatched = false;
     introTouchY = null;
   }, { passive: true });
   window.addEventListener("touchcancel", () => {
-    coverGestureLatched = false;
     introTouchY = null;
   }, { passive: true });
 
@@ -264,6 +243,10 @@ if (introStage) {
     if (window.scrollY > introStage.offsetTop + 2) return;
     const opens = ["ArrowDown", "PageDown", " "].includes(event.key);
     const closes = ["ArrowUp", "PageUp"].includes(event.key);
+    if (titleOverlayAnimating && (opens || closes)) {
+      event.preventDefault();
+      return;
+    }
     if (opens && !titleOverlayOpen) {
       event.preventDefault();
       animateTitleOverlay(true);

@@ -1507,7 +1507,7 @@ const initMemoryParticleDemo = (demo) => {
     video.controls = false;
     video.autoplay = true;
     video.loop = true;
-    video.muted = true;
+    video.muted = false;
     video.poster = memoryDemoConfig.video.poster;
     video.load();
 
@@ -1546,8 +1546,18 @@ const initMemoryParticleDemo = (demo) => {
         video.pause();
       }
     });
+
+    const resumeDefaultSoundPlayback = (event) => {
+      if (titleModeActive || video.muted || !video.paused) return;
+      if (event.type === "pointerdown" && event.target === video) return;
+      video.play().catch(() => {});
+    };
+    window.addEventListener("pointerdown", resumeDefaultSoundPlayback, { capture: true });
+    window.addEventListener("keydown", resumeDefaultSoundPlayback, { capture: true });
   }
 
+  setToggleState(soundToggle, video ? !video.muted : true);
+  setToggleState(conditionToggle, conditionVisible);
   syncPlayerFocus();
 
   window.ECHO_MEMORY_PARTICLES = {

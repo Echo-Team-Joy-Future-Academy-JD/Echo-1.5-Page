@@ -501,6 +501,8 @@ const initMemoryParticleDemo = (demo) => {
   let progressTrackStart = 0;
   let progressTrackWidth = 0;
   let conditionVisible = true;
+  let preferredSoundEnabled = video ? !video.muted : true;
+  let preferredConditionVisible = true;
   let popcornClickCount = 0;
   let popcornExhausted = false;
   let popcornSpeechTimer = null;
@@ -731,6 +733,7 @@ const initMemoryParticleDemo = (demo) => {
     memoryPageActive = !event.detail?.nextSettled;
     introPageVisible = Boolean(event.detail?.videoActive);
     const titleMode = Boolean(event.detail?.nextVisible);
+    const coverSettled = Number(event.detail?.transition ?? 0) <= 0.005;
 
     if (titleMode && !titleModeActive) {
       titleModeActive = true;
@@ -749,8 +752,18 @@ const initMemoryParticleDemo = (demo) => {
       manuallyPaused = false;
       playbackActiveState = null;
       video.play().catch(() => {});
-    } else if (!titleMode && titleModeActive) {
+    } else if (coverSettled && titleModeActive) {
       titleModeActive = false;
+      video.muted = !preferredSoundEnabled;
+      setToggleState(soundToggle, preferredSoundEnabled);
+      if (conditionVisible !== preferredConditionVisible) {
+        window.dispatchEvent(new CustomEvent("echo:condition-visibility", {
+          detail: {
+            enabled: preferredConditionVisible,
+            source: "intro-cover-restore",
+          },
+        }));
+      }
     }
     syncPlayerFocus();
   });
@@ -1121,15 +1134,17 @@ const initMemoryParticleDemo = (demo) => {
   soundToggle?.addEventListener("click", () => {
     if (!video) return;
     const soundEnabled = video.muted;
+    preferredSoundEnabled = soundEnabled;
     video.muted = !soundEnabled;
     setToggleState(soundToggle, soundEnabled);
     if (!soundEnabled) stopAudioPreview();
   });
 
   conditionToggle?.addEventListener("click", () => {
+    preferredConditionVisible = !conditionVisible;
     window.dispatchEvent(new CustomEvent("echo:condition-visibility", {
       detail: {
-        enabled: !conditionVisible,
+        enabled: preferredConditionVisible,
         source: "popcorn-control",
       },
     }));

@@ -2661,6 +2661,10 @@ html.is-title-gate-scrolling {
   transform: translateY(-2px);
 }
 
+.popcorn-control.is-popping {
+  animation: popcornButtonPop 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .popcorn-control:focus-visible {
   outline: 1px solid rgba(255, 74, 87, 0.72);
   outline-offset: 4px;
@@ -2698,6 +2702,35 @@ html.is-title-gate-scrolling {
 
 .memory-controls.is-open .popcorn-kernels {
   animation: popcornOpen 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.popcorn-burst-kernel {
+  position: absolute;
+  right: 25px;
+  bottom: 30px;
+  z-index: -1;
+  display: block;
+  width: 15px;
+  height: 15px;
+  color: rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.68));
+  will-change: transform, opacity;
+}
+
+.popcorn-burst-kernel:nth-of-type(3n) {
+  color: var(--red-hot);
+}
+
+.popcorn-burst-kernel svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  stroke: currentColor;
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .memory-controls-menu {
@@ -2792,6 +2825,13 @@ html.is-title-gate-scrolling {
   0% { transform: translateY(0) scale(1); }
   45% { transform: translateY(-7px) scale(1.07); }
   100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes popcornButtonPop {
+  0% { transform: translateY(-2px) scale(1); }
+  32% { transform: translateY(2px) scale(0.82); }
+  68% { transform: translateY(-5px) scale(1.14); }
+  100% { transform: translateY(-2px) scale(1); }
 }
 
 @media (max-width: 560px) {

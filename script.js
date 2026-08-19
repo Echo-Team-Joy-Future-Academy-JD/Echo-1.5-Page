@@ -935,7 +935,67 @@ const initMemoryParticleDemo = (demo) => {
     if (controlsMenu) controlsMenu.inert = true;
   };
 
+  const burstPopcorn = () => {
+    if (!memoryControls || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const fragment = document.createDocumentFragment();
+    const trajectories = [
+      { landX: -124, lift: 78 },
+      { landX: -64, lift: 108 },
+      { landX: 18, lift: 116 },
+      { landX: 68, lift: 86 },
+    ];
+    const kernels = [];
+    trajectories.forEach((trajectory, index) => {
+      const kernel = document.createElement("span");
+      kernel.className = "popcorn-burst-kernel";
+      const rotation = randomBetween(-160, 160);
+      kernel.innerHTML = `
+        <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
+          <path d="M4.2 10.7C1.4 9.8 1.7 5.8 4.5 5.3c.1-2.8 3.9-3.8 5.4-1.4 2.3-1.5 5.1.8 4.2 3.3 2.2 1.4.8 4.9-1.8 4.7-.7 2.6-4.5 2.8-5.4.2-1.6 1.1-3.7.2-3.8-1.6"/>
+        </svg>`;
+      fragment.append(kernel);
+      kernels.push({
+        kernel,
+        delay: index * 14,
+        landX: trajectory.landX + randomBetween(-7, 7),
+        groundY: randomBetween(29, 35),
+        lift: trajectory.lift + randomBetween(-5, 5),
+        rotation,
+      });
+    });
+    memoryControls.append(fragment);
+    kernels.forEach(({ kernel, delay, landX, groundY, lift, rotation }) => {
+      const frames = Array.from({ length: 21 }, (_, frameIndex) => {
+        const progress = frameIndex / 20;
+        const x = landX * progress;
+        const y = -4 * lift * progress * (1 - progress) + groundY * progress;
+        const opacity = progress < 0.08
+          ? progress / 0.08
+          : progress > 0.82
+            ? (1 - progress) / 0.18
+            : 1;
+        const scale = 0.5 + Math.min(progress / 0.18, 1) * 0.5;
+        return {
+          offset: progress,
+          opacity: Math.max(0, opacity),
+          transform: `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) rotate(${(rotation * progress).toFixed(1)}deg) scale(${scale.toFixed(3)})`,
+        };
+      });
+      kernel.animate(frames, {
+        duration: 680,
+        delay,
+        easing: "linear",
+        fill: "forwards",
+      });
+      window.setTimeout(() => kernel.remove(), 780 + delay);
+    });
+    popcornControl?.classList.remove("is-popping");
+    window.requestAnimationFrame(() => popcornControl?.classList.add("is-popping"));
+    window.setTimeout(() => popcornControl?.classList.remove("is-popping"), 420);
+  };
+
   popcornControl?.addEventListener("click", () => {
+    burstPopcorn();
     const open = !memoryControls.classList.contains("is-open");
     memoryControls.classList.toggle("is-open", open);
     popcornControl.setAttribute("aria-expanded", String(open));

@@ -42,4 +42,5 @@ next-env.d.ts
 /work/
 /public/media/
 
-/Echo-LongVideo-Page-1.0/
+/Echo-LongVideo-Page-1.0/.git/
+/Echo-LongVideo-Page-1.0/assets/long/

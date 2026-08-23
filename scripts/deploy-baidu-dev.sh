@@ -76,7 +76,8 @@ npm run build
 tmux kill-session -t "$TMUX_SESSION" 2>/dev/null || true
 : > "$SERVICE_LOG"
 tmux new-session -d -s "$TMUX_SESSION" \
-  "cd '$DEPLOY_DIR' && export PATH='$NODE_BIN':\$PATH && exec npm run dev -- --host 0.0.0.0 --port '$SERVICE_PORT' --strictPort >> '$SERVICE_LOG' 2>&1"
+  "cd '$DEPLOY_DIR' && export PATH='$NODE_BIN':\$PATH && exec npm run dev -- --host 0.0.0.0 --port '$SERVICE_PORT' --strictPort >> '$SERVICE_LOG' 2>&1" \
+  9>&-
 
 for _ in {1..30}; do
   status_code="$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:$SERVICE_PORT/" || true)"

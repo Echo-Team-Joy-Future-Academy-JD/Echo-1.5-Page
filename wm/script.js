@@ -78,7 +78,8 @@
         ["game1", "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/game1.mp4", "Game World 1"],
         ["ti2av_r000_demo424_d0181_wmb_t27_seed1", "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/ti2av_r000_demo424_d0181-wmb-t27_seed1_continuous_ui.mp4", "WBench First-Person Rollout"],
         ["ti2av_r010_demo424_d0179_wmb_t25_seed16", "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/ti2av_r010_demo424_d0179-wmb-t25_seed16_continuous_ui.mp4", "WBench First-Person Rollout 010"],
-        ["game3", "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/game3.mp4", "Game World 3"]
+        ["game3", "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/game3.mp4", "Game World 3"],
+        ["ti2av_r007_sana_c102_hard_indoor_003_seed3", "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/ti2av_r007_sana_c102-hard-indoor_003_seed3_continuous_ui.mp4", "Hard Indoor First-Person Rollout"]
       ]
     },
     {

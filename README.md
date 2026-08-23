@@ -1,7 +1,8 @@
-# Echo 1.5 Project Page
+# JoyAI-Echo-1.5 Project Page
 
-Static project-page concept for Echo 1.5, designed for direct deployment to
-GitHub Pages.
+Static project page for the long-video variant of JoyAI-Echo-1.5, designed for
+direct deployment to GitHub Pages. The page focuses exclusively on
+long-horizon audio-visual generation.
 
 ## Local preview
 

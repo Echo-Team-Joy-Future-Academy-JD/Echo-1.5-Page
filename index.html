@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Echo 1.5 memory-driven long audio-visual generation showcase.">
-    <meta name="keywords" content="JoyAI-Echo, long video generation, audio-visual generation, memory bank, streaming video generation">
-    <title>Echo 1.5 · Memory-Driven Long Video</title>
+    <meta name="description" content="JoyAI-Echo-1.5 long-horizon audio-visual generation for persistent multi-shot stories.">
+    <meta name="keywords" content="JoyAI-Echo-1.5, long video generation, audio-visual generation, cross-shot consistency, persistent stories">
+    <title>JoyAI-Echo-1.5 · Long-Horizon Audio-Visual Generation</title>
     <link rel="icon" href="data:,">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -131,31 +131,31 @@
 
           <div class="intro-next-hero" data-intro-next>
             <div class="hero-content intro-hero-content">
-              <p class="paper-meta">Technical Report | May 28, 2026 | Echo Team @ Joy Future Academy, JD</p>
-              <h1><span>JoyAI-Echo</span>: Pushing the Frontier of Long Audio-Visual Generation</h1>
+              <p class="paper-meta">Technical Report | August 23, 2026 | Echo Team @ Joy Future Academy, JD</p>
+              <h1><span>JoyAI-Echo-1.5</span>: Long-Horizon Audio-Visual Generation for Persistent Stories</h1>
               <p class="hero-copy">
-                A memory-driven audio-visual generation framework for minute-level coherent video,
-                real-time streaming, conversational control, and high-resolution output.
+                A long-video system that preserves character appearance, speaker identity,
+                narrative continuity, and synchronized sound across multi-shot stories.
               </p>
               <div class="hero-actions">
-                <a class="btn btn-primary" href="https://www.researchgate.net/publication/405770309_JoyAI-Echo_Pushing_the_Frontier_of_Long_Audio-Visual_Generation" target="_blank" rel="noopener">Paper</a>
+                <a class="btn btn-primary" href="./JoyAI_Echo_1_5.pdf" target="_blank" rel="noopener">Paper</a>
                 <a class="btn btn-secondary" href="https://github.com/jd-opensource/JoyAI-Echo">Code</a>
-                <a class="btn btn-secondary" href="#long-video">JoyAI-Echo Cases</a>
+                <a class="btn btn-secondary" href="#long-video">Long-Video Cases</a>
               </div>
             </div>
 
             <div class="hero-metrics intro-hero-metrics" aria-label="Key highlights">
               <div>
-                <strong>5 min</strong>
-                <span>minute-level coherent stories</span>
+                <strong>3,000</strong>
+                <span>shots in the long-video benchmark</span>
               </div>
               <div>
-                <strong>7.5x</strong>
-                <span>generation speedup</span>
+                <strong>6 / 7</strong>
+                <span>best automatic evaluation metrics</span>
               </div>
               <div>
-                <strong>A/V</strong>
-                <span>memory-driven consistency</span>
+                <strong>8 steps</strong>
+                <span>distilled audio-visual generation</span>
               </div>
             </div>
           </div>
@@ -169,23 +169,18 @@
                         <h2>Abstract</h2>
                     </div>
                     <p class="abstract-text fade-in-up">
-                        Long video generation still suffers from error accumulation, weak temporal coherence, and
-                        prohibitive latency, limiting its applicability to interactive scenarios. We present
-                        <strong>JoyAI-Echo</strong>, a framework that breaks these barriers through four key advances.
-                        Central to its performance, a cross-modal audio-visual memory bank preserves character
-                        appearance and voice timbre consistently over five-minute videos, while a post-training
-                        pipeline combines memory-based reinforcement learning with distribution matching distillation
-                        for a 7.5&times; speedup to substantially boost visual quality and alignment. Empowered by these
-                        two components, JoyAI-Echo decisively outperforms <em>Happy Oyster</em> (Directing mode) on
-                        long-form generation and even surpasses the short-video specialist <em>Wan 2.6</em> on
-                        human-centric tasks. Beyond raw generation quality, an interactive agent enables real-time user
-                        editing through conversational instructions, and a lightweight super-resolution module
-                        maintains high definition under streaming latency, further elevating the overall experience and
-                        delivering instantly editable, conversation-speed video creation. For the first time,
-                        JoyAI-Echo simultaneously achieves long-range cross-modal consistency, real-time inference for
-                        minute-long video, conversational interactivity, and high-resolution output&mdash;without
-                        compromise, inaugurating a new era of interactive video generation. Codes and weights will be
-                        open-sourced.
+                        Video generation is moving beyond isolated clips toward persistent long-form narratives, where
+                        characters, voices, events, and sound must remain coherent across many shots. We present the
+                        long-video variant of <strong>JoyAI-Echo-1.5</strong>, a unified audio-visual generation system
+                        built around composable cross-shot memory. It aggregates visual evidence from multiple prior
+                        shots and speaker cues from speech-filtered full-shot audio, preserving appearance and voice
+                        identity while supporting flexible text, image, and memory conditioning. A causal few-step
+                        generator, trained with progressive audio-visual teacher forcing and short- and long-horizon
+                        Self-Gradient Forcing on self-generated rollouts, improves stability over extended generation.
+                        On a benchmark of 100 stories and 3,000 shots, JoyAI-Echo-1.5 achieves the best result on six of
+                        seven automatic metrics, covering cross-shot consistency, imaging quality, text alignment, and
+                        speech fidelity. Human evaluation further favors JoyAI-Echo-1.5 over HappyOyster across all five
+                        long-video dimensions, with the largest margin in audio-visual synchronization.
                     </p>
                 </div>
             </section>
@@ -194,7 +189,7 @@
                 <div class="container-wide">
                     <div class="section-header fade-in-up">
                         <h2>
-                            Long Cases
+                            Long-Horizon Cases
                             <span class="av-badge section-av-badge" aria-label="Audio-video samples">
                                 <svg class="av-badge-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="24" width="24" aria-hidden="true"><path fill="currentColor" d="M6.61743 7.57642c0.37364 -0.15469 0.80389 -0.06916 1.08985 0.21679l8.50002 8.49999c0.2858 0.286 0.3715 0.7163 0.2168 1.0899 -0.1548 0.3734 -0.5196 0.617 -0.9239 0.6171h-4.5859l-1.49999 1.5c-0.78094 0.7809 -2.04708 0.7807 -2.82813 0l-2.08594 -2.0859c-0.78094 -0.781 -0.78095 -2.0471 0 -2.8281l1.5 -1.5V8.50024c0 -0.40441 0.24359 -0.76901 0.61719 -0.92382m1.38281 5.92378c-0.00006 0.2652 -0.1055 0.5196 -0.29296 0.7071l-1.79297 1.7929 2.08593 2.086 1.79297 -1.793 0.07325 -0.0664c0.17794 -0.1458 0.40174 -0.2266 0.63374 -0.2266h2.586l-5.08596 -5.0859zm0.50098 -9.7939c3.27128 -1.37885 7.19558 -0.73781 9.86328 1.92969 2.6677 2.66766 3.3095 6.59191 1.9307 9.86331 -0.2146 0.5088 -0.8017 0.7477 -1.3106 0.5332 -0.5085 -0.2146 -0.7472 -0.8009 -0.5332 -1.3096 1.0739 -2.5477 0.5719 -5.59994 -1.501 -7.67285 -2.0728 -2.07265 -5.1243 -2.57469 -7.67184 -1.50098 -0.50888 0.21439 -1.09605 -0.02433 -1.31054 -0.5332 -0.21428 -0.50871 0.0247 -1.09492 0.5332 -1.30957m2.84668 3.8418c1.3581 -0.19803 2.7899 0.22546 3.835 1.2705 1.0448 1.04512 1.4668 2.4761 1.2685 3.834 -0.0536 0.3673 -0.4953 0.4754 -0.7578 0.2129L11.135 8.30591c-0.2623 -0.26241 -0.1541 -0.70403 0.2129 -0.75781"/></svg>
                                 <span>Audio</span>
@@ -216,32 +211,6 @@
                 </div>
             </section>
 
-            <section id="short-video" class="section">
-                <div class="container-wide">
-                    <div class="section-header fade-in-up">
-                        <h2>
-                            Short Cases
-                            <span class="av-badge section-av-badge" aria-label="Audio-video samples">
-                                <svg class="av-badge-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="24" width="24" aria-hidden="true"><path fill="currentColor" d="M6.61743 7.57642c0.37364 -0.15469 0.80389 -0.06916 1.08985 0.21679l8.50002 8.49999c0.2858 0.286 0.3715 0.7163 0.2168 1.0899 -0.1548 0.3734 -0.5196 0.617 -0.9239 0.6171h-4.5859l-1.49999 1.5c-0.78094 0.7809 -2.04708 0.7807 -2.82813 0l-2.08594 -2.0859c-0.78094 -0.781 -0.78095 -2.0471 0 -2.8281l1.5 -1.5V8.50024c0 -0.40441 0.24359 -0.76901 0.61719 -0.92382m1.38281 5.92378c-0.00006 0.2652 -0.1055 0.5196 -0.29296 0.7071l-1.79297 1.7929 2.08593 2.086 1.79297 -1.793 0.07325 -0.0664c0.17794 -0.1458 0.40174 -0.2266 0.63374 -0.2266h2.586l-5.08596 -5.0859zm0.50098 -9.7939c3.27128 -1.37885 7.19558 -0.73781 9.86328 1.92969 2.6677 2.66766 3.3095 6.59191 1.9307 9.86331 -0.2146 0.5088 -0.8017 0.7477 -1.3106 0.5332 -0.5085 -0.2146 -0.7472 -0.8009 -0.5332 -1.3096 1.0739 -2.5477 0.5719 -5.59994 -1.501 -7.67285 -2.0728 -2.07265 -5.1243 -2.57469 -7.67184 -1.50098 -0.50888 0.21439 -1.09605 -0.02433 -1.31054 -0.5332 -0.21428 -0.50871 0.0247 -1.09492 0.5332 -1.30957m2.84668 3.8418c1.3581 -0.19803 2.7899 0.22546 3.835 1.2705 1.0448 1.04512 1.4668 2.4761 1.2685 3.834 -0.0536 0.3673 -0.4953 0.4754 -0.7578 0.2129L11.135 8.30591c-0.2623 -0.26241 -0.1541 -0.70403 0.2129 -0.75781"/></svg>
-                                <span>Audio</span>
-                            </span>
-                        </h2>
-                    </div>
-
-                    <div class="case-carousel fade-in-up" data-case-carousel>
-                        <button class="case-nav case-nav-prev" type="button" aria-label="Previous short clip cases" data-carousel-prev>
-                            <span aria-hidden="true">‹</span>
-                        </button>
-                        <div class="case-carousel-viewport" data-empty-label="Short Cases">
-                            <div class="case-grid case-track" data-case-track></div>
-                        </div>
-                        <button class="case-nav case-nav-next" type="button" aria-label="Next short clip cases" data-carousel-next>
-                            <span aria-hidden="true">›</span>
-                        </button>
-                    </div>
-                </div>
-            </section>
-
         <section id="conclusions" class="section section-alt">
             <div class="container-wide">
                 <div class="section-header fade-in-up">
@@ -250,23 +219,23 @@
                 <div class="conclusion-grid">
                     <article class="conclusion-card fade-in-up">
                         <span>01</span>
-                        <h3>Cross-modal memory keeps identity alive.</h3>
-                        <p>Slot-paired visual and audio memories preserve face, appearance, voice timbre, and face-voice correspondence across distant shots.</p>
+                        <h3>Identity persists across distant shots.</h3>
+                        <p>Composable visual and speech-filtered audio memory delivers the strongest ViCLIP, Self-CIDS, and speaker-consistency scores among all evaluated systems.</p>
                     </article>
                     <article class="conclusion-card fade-in-up">
                         <span>02</span>
-                        <h3>Streaming generation becomes practical.</h3>
-                        <p>Memory-conditioned acceleration and low-step distillation deliver a 7.5x speedup over the original multi-step pipeline.</p>
+                        <h3>Consistency does not trade away instruction following.</h3>
+                        <p>JoyAI-Echo-1.5 reaches the best CLIP score of 0.2868 while preserving changing actions, scenes, camera views, and shot-specific narrative details.</p>
                     </article>
                     <article class="conclusion-card fade-in-up">
                         <span>03</span>
-                        <h3>Interaction is part of the generation loop.</h3>
-                        <p>The Director Agent expands rough user intent into structured screenplay, shots, characters, scenes, and localized revisions.</p>
+                        <h3>Audio and video remain one coherent timeline.</h3>
+                        <p>Joint generation achieves 0.9674 speech recall and a 28.1-point human-preference lead over HappyOyster in audio-visual synchronization.</p>
                     </article>
                     <article class="conclusion-card fade-in-up">
                         <span>04</span>
-                        <h3>Resolution stays aligned with latency.</h3>
-                        <p>A one-step audio-visual super-resolution stage sharpens 1K output without breaking streaming generation constraints.</p>
+                        <h3>Few-step generation remains stable over long rollouts.</h3>
+                        <p>An 8-step distilled generator combines causal audio-visual teacher forcing with short- and long-horizon Self-Gradient Forcing on self-generated histories.</p>
                     </article>
                 </div>
             </div>
@@ -276,14 +245,14 @@
             <div class="container-wide">
                 <div class="section-header fade-in-up">
                     <h2>Results</h2>
-                    <p>Human preference study across long-form consistency, audio quality, prompt following, and human-centric generation.</p>
+                    <p>Evaluation on 100 stories and 3,000 shots measures cross-shot consistency, quality, text alignment, speech fidelity, and human preference.</p>
                 </div>
 
                 <div class="table-card fade-in-up">
                     <div class="results-caption">
                         <div class="results-caption-copy">
-                            <h3>GSB user study on long- and short-video generation</h3>
-                            <p>The numbers denote the percentage of user preferences.</p>
+                            <h3>Long-horizon automatic evaluation</h3>
+                            <p>JoyAI-Echo-1.5 ranks first on six of seven metrics and second on aesthetic quality. All metrics are higher-is-better.</p>
                         </div>
                     </div>
                     <div class="table-wrapper">
@@ -296,59 +265,93 @@
                                 <col class="metric-col">
                                 <col class="metric-col">
                                 <col class="metric-col">
+                                <col class="metric-col">
                             </colgroup>
                             <thead>
                                 <tr>
-                                    <th rowspan="2">Aspect</th>
-                                    <th colspan="3">Long Video</th>
-                                    <th colspan="3">Short Video (Human-Centric)</th>
+                                    <th rowspan="2">Method</th>
+                                    <th colspan="3">Cross-Shot Consistency</th>
+                                    <th colspan="2">Video Quality</th>
+                                    <th>Text</th>
+                                    <th>Speech</th>
                                 </tr>
                                 <tr>
-                                    <th>JoyAI-Echo</th>
-                                    <th>Tie</th>
-                                    <th>HappyOyster<br>(Directing)</th>
-                                    <th>JoyAI-Echo</th>
-                                    <th>Tie</th>
-                                    <th>Wan 2.6</th>
+                                    <th>ViCLIP</th>
+                                    <th>Self-CIDS</th>
+                                    <th>Voice</th>
+                                    <th>Aesthetic</th>
+                                    <th>Imaging</th>
+                                    <th>CLIP</th>
+                                    <th>Recall</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Visual aesthetics</td>
-                                    <td><strong>63.6%</strong></td>
-                                    <td>8.8%</td>
-                                    <td>27.6%</td>
-                                    <td><strong>58.8%</strong></td>
-                                    <td>14.7%</td>
-                                    <td>26.5%</td>
+                                    <td>JavisDiT++</td>
+                                    <td>0.6955</td><td>0.5621</td><td>0.7933</td><td>0.5019</td><td>0.6084</td><td>0.2522</td><td>0.0951</td>
                                 </tr>
                                 <tr>
-                                    <td>Audio quality</td>
-                                    <td><strong>81.7%</strong></td>
-                                    <td>6.5%</td>
-                                    <td>11.8%</td>
-                                    <td>32.3%</td>
-                                    <td>30.9%</td>
-                                    <td>36.8%</td>
+                                    <td>LTX-2.3</td>
+                                    <td>0.7047</td><td>0.6135</td><td>0.6847</td><td>0.5436</td><td>0.4751</td><td>0.2559</td><td>0.9304</td>
                                 </tr>
                                 <tr>
-                                    <td>Prompt following</td>
-                                    <td><strong>80.6%</strong></td>
-                                    <td>13.5%</td>
-                                    <td>5.9%</td>
-                                    <td>33.8%</td>
-                                    <td>36.8%</td>
-                                    <td>29.4%</td>
+                                    <td>LTX-2.5</td>
+                                    <td>0.7775</td><td>0.6640</td><td>0.7603</td><td><strong>0.6019</strong></td><td>0.5804</td><td>0.2683</td><td>0.9545</td>
                                 </tr>
                                 <tr>
-                                    <td>IP consistency</td>
-                                    <td><strong>59.4%</strong></td>
-                                    <td>12.9%</td>
-                                    <td>27.7%</td>
-                                    <td>--</td>
-                                    <td>--</td>
-                                    <td>--</td>
+                                    <td>ShotStream + MMAudio</td>
+                                    <td>0.7988</td><td>0.7308</td><td>0.7945</td><td>0.5255</td><td>0.6044</td><td>0.1998</td><td>0.0297</td>
                                 </tr>
+                                <tr>
+                                    <td>StoryMem + MMAudio</td>
+                                    <td>0.7897</td><td>0.7491</td><td>0.7643</td><td>0.5265</td><td>0.6320</td><td>0.2368</td><td>0.0301</td>
+                                </tr>
+                                <tr>
+                                    <td>HappyOyster (Directing)</td>
+                                    <td>0.7535</td><td>0.6940</td><td>0.7705</td><td>0.5606</td><td>0.6701</td><td>0.2544</td><td>0.1085</td>
+                                </tr>
+                                <tr>
+                                    <td>JoyAI-Echo-1.0</td>
+                                    <td>0.8026</td><td>0.7793</td><td>0.8129</td><td>0.5679</td><td>0.7058</td><td>0.2658</td><td>0.9489</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>JoyAI-Echo-1.5</strong></td>
+                                    <td><strong>0.8264</strong></td><td><strong>0.7937</strong></td><td><strong>0.8524</strong></td><td>0.5705</td><td><strong>0.7467</strong></td><td><strong>0.2868</strong></td><td><strong>0.9674</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="table-card fade-in-up">
+                    <div class="results-caption">
+                        <div class="results-caption-copy">
+                            <h3>Human evaluation against HappyOyster</h3>
+                            <p>Good-Similar-Bad pairwise comparison for long-horizon audio-visual generation.</p>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="results-table gsb-table">
+                            <colgroup>
+                                <col class="aspect-col">
+                                <col class="metric-col">
+                                <col class="metric-col">
+                                <col class="metric-col">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>Aspect</th>
+                                    <th>JoyAI-Echo-1.5</th>
+                                    <th>Similar</th>
+                                    <th>HappyOyster</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Story-instruction following</td><td><strong>38.6%</strong></td><td>43.8%</td><td>17.7%</td></tr>
+                                <tr><td>Dialogue/background-audio following</td><td><strong>39.2%</strong></td><td>37.3%</td><td>23.5%</td></tr>
+                                <tr><td>Memory/identity consistency</td><td><strong>24.8%</strong></td><td>59.5%</td><td>15.7%</td></tr>
+                                <tr><td>Audio-visual synchronization</td><td><strong>48.4%</strong></td><td>31.4%</td><td>20.3%</td></tr>
+                                <tr><td>Audio quality</td><td><strong>44.4%</strong></td><td>22.2%</td><td>33.3%</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -416,12 +419,12 @@
                 </div>
                 <div class="bibtex-card fade-in-up">
                     <button class="bibtex-copy" type="button" data-copy-bibtex>Copy</button>
-                    <pre><code>@techreport{joyai2026echo,
-  title        = {JoyAI-Echo: Pushing the Frontier of Long Audio-Visual Generation},
+                    <pre><code>@techreport{joyai2026echo15,
+  title        = {Long-Horizon Audio-Visual Generation for Persistent Stories and Interactive Worlds},
   author       = {{Echo Team @ Joy Future Academy, JD}},
   institution  = {Joy Future Academy, JD},
   year         = {2026},
-  month        = {May}
+  month        = {August}
 }</code></pre>
                 </div>
             </div>

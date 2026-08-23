@@ -2263,6 +2263,10 @@
   box-shadow: none;
 }
 
+.video-bg-page #results .table-card + .table-card {
+  margin-top: 72px;
+}
+
 .video-bg-page #results .table-card::before {
   display: none;
 }

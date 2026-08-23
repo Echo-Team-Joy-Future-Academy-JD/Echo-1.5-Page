@@ -70,10 +70,15 @@
         ["output_action_46", "output_action (46).mp4", "Action Output 46"],
         ["sunny_garden_courtyard", "sunny_graden_courtyard (3).mp4", "Sunny Garden Courtyard"],
         ["case_177_combined_continuous_ui", "case_177_combined_continuous_ui.mp4"],
-        ["ti2av_r000_demo424_d0181_wmb_t27_seed1", "ti2av_r000_demo424_d0181-wmb-t27_seed1_continuous_ui.mp4"],
         ["ti2av_r013_demo424_d0255_wmb_t42_seed4", "ti2av_r013_demo424_d0255-wmb-t42_seed4_continuous_ui.mp4"],
         ["ti2av_r021_demo424_d0302_wm10s_t09_seed8", "ti2av_r021_demo424_d0302-wm10s-t09_seed8_continuous_ui.mp4"],
         ["ti2av_r023_sana_c035_easy_indoor_016_seed3", "ti2av_r023_sana_c035-easy-indoor_016_seed3_continuous_ui.mp4"]
+      ],
+      remoteFiles: [
+        ["game1", "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/game1.mp4", "Game World 1"],
+        ["ti2av_r000_demo424_d0181_wmb_t27_seed1", "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/ti2av_r000_demo424_d0181-wmb-t27_seed1_continuous_ui.mp4", "WBench First-Person Rollout"],
+        ["ti2av_r010_demo424_d0179_wmb_t25_seed16", "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/ti2av_r010_demo424_d0179-wmb-t25_seed16_continuous_ui.mp4", "WBench First-Person Rollout 010"],
+        ["game3", "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/game3.mp4", "Game World 3"]
       ]
     },
     {
@@ -152,19 +157,21 @@
     if (!chapterResults) return;
     const chapterRuns = [
       ...chapter.slugs.map((slug) => runBySlug.get(slug)).filter(Boolean).map(([slug, directory, filename]) => ({ slug, directory, filename })),
-      ...(chapter.localFiles || []).map(([slug, filename, displayTitle]) => ({ slug, filename, displayTitle, local: true }))
+      ...(chapter.localFiles || []).map(([slug, filename, displayTitle]) => ({ slug, filename, displayTitle, local: true })),
+      ...(chapter.remoteFiles || []).map(([slug, source, displayTitle]) => ({ slug, source, displayTitle, local: true, remote: true }))
     ];
-    const cards = chapterRuns.map(({ slug, directory, filename, displayTitle, local }, index) => {
+    const cards = chapterRuns.map(({ slug, directory, filename, source: remoteSource, displayTitle, local }, index) => {
       const archiveSource = directory ? `../output_results/gradio_app/${directory}/${filename}` : "";
-      const chapterSource = `./assets/optimized/results/${chapter.folder}/${filename}`;
-      const promptUrl = `./assets/results/${chapter.folder}/prompt.txt`;
+      const chapterSource = remoteSource || `./assets/optimized/results/${chapter.folder}/${filename}`;
+      const promptUrl = remoteSource ? "" : `./assets/results/${chapter.folder}/prompt.txt`;
       const archivePromptUrl = directory ? `../output_results/gradio_app/${directory}/prompt.txt` : promptUrl;
-      const promptIndexUrl = `./assets/results/${chapter.folder}/prompts.txt`;
+      const promptIndexUrl = remoteSource ? "" : `./assets/results/${chapter.folder}/prompts.txt`;
       const archivePromptIndexUrl = directory ? `../output_results/gradio_app/${directory}/prompts.txt` : promptIndexUrl;
       const fallbackSource = local ? "" : archiveSource;
       const fallbackAttr = fallbackSource ? ` data-fallback-src="${fallbackSource}"` : "";
       const sourceLabel = local ? "SELECTED VIDEO" : "ARCHIVE VIDEO";
-      return `<article class="demo-card generated-run-card${local ? " local-card" : ""}" data-run-slug="${slug}" data-prompt-url="${promptUrl}" data-prompt-stem="${filename}" data-prompt-index-url="${promptIndexUrl}" data-archive-prompt-url="${archivePromptUrl}" data-archive-prompt-index-url="${archivePromptIndexUrl}"><div class="video-frame"><video class="demo-video" data-src="${chapterSource}"${fallbackAttr} muted loop playsinline preload="metadata" controls></video><canvas class="audio-waveform" aria-hidden="true"></canvas><button class="listen-button" type="button">Listen with sound</button></div><div class="demo-card-meta"><span class="media-index">${chapter.number} / ${String(index + 1).padStart(2, "0")} / ${sourceLabel}</span><h3>${escapeHtml(displayTitle || titleFromSlug(slug))}</h3><p>${local ? "Selected video from this chapter folder." : "Representative full-length Gradio output from the local archive."}</p><details class="prompt-details"><summary>View prompt</summary><p class="prompt-text">Loading prompt...</p></details></div></article>`;
+      const promptDetails = remoteSource ? "" : `<details class="prompt-details"><summary>View prompt</summary><p class="prompt-text">Loading prompt...</p></details>`;
+      return `<article class="demo-card generated-run-card${local ? " local-card" : ""}" data-run-slug="${slug}" data-prompt-url="${promptUrl}" data-prompt-stem="${filename || ""}" data-prompt-index-url="${promptIndexUrl}" data-archive-prompt-url="${archivePromptUrl}" data-archive-prompt-index-url="${archivePromptIndexUrl}"><div class="video-frame"><video class="demo-video" data-src="${chapterSource}"${fallbackAttr} muted loop playsinline preload="metadata" controls></video><canvas class="audio-waveform" aria-hidden="true"></canvas><button class="listen-button" type="button">Listen with sound</button></div><div class="demo-card-meta"><span class="media-index">${chapter.number} / ${String(index + 1).padStart(2, "0")} / ${sourceLabel}</span><h3>${escapeHtml(displayTitle || titleFromSlug(slug))}</h3><p>${local ? "Selected video from this chapter folder." : "Representative full-length Gradio output from the local archive."}</p>${promptDetails}</div></article>`;
     }).join("");
     chapterResults.insertAdjacentHTML("beforeend", `<section class="chapter-block" aria-labelledby="${chapter.id}-title"><div class="chapter-heading"><span class="chapter-number">${chapter.number}</span><div><p class="media-index">${chapter.label}</p><h3 id="${chapter.id}-title">${chapter.title}</h3><p>${chapter.description}</p></div></div><div class="demo-grid generated-runs">${cards}</div></section>`);
   });

@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="EchoWM: an omnimodal world model for enterable generative media with continuous navigation and synchronized video, sound, music, and speech." />
+    <meta name="theme-color" content="#071012" />
+    <title>EchoWM | Enterable Omnimodal World Models</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./script.js"></script>
+  </head>
+  <body>
+    <header class="site-nav">
+      <a class="brand" href="#top" aria-label="EchoWM home"><span class="brand-mark">E</span><span>EchoWM</span></a>
+      <nav aria-label="Primary navigation">
+        <a href="#overview">Overview</a>
+        <a href="#abstract">Abstract</a>
+        <a href="#demos">Demos</a>
+        <a href="#runs">Runs</a>
+        <a href="#audio">Audio</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+      </nav>
+      <a class="nav-cta" href="#citation">Cite the work <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <video id="hero-video" class="hero-video" autoplay muted loop playsinline preload="auto">
+          <source src="./assets/optimized/featured/hero-reel.mp4" type="video/mp4" />
+        </video>
+        <div class="hero-cover" aria-hidden="true"></div>
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="hero-content">
+          <p class="eyebrow">Research project / 2026</p>
+          <h1 id="hero-title">EchoWM<span>Open and Enterable Omnimodal World Models</span></h1>
+          <p class="hero-lede">An omnimodal world model for generative media that responds to continuous navigation while video, environmental sound, music, and speech evolve together.</p>
+          <div class="hero-authorship" aria-label="Authors and affiliations">
+            <p class="hero-authors">
+              <span>Songchun Zhang<sup>1</sup></span>,
+              <span>Yaowei Li<sup>2</sup></span>,
+              <span>Junhao Zhuang<sup>3</sup></span>,
+              <span>Weiyang Jin<sup>4</sup></span>,
+              <span>Haoyu Wang<sup>5</sup></span>,
+              <span>Xin Lu<sup>6</sup></span>,
+              <span>Zeyue Xue<sup>3</sup></span>,
+              <span>Haoran Li<sup>6</sup></span>,
+              <span>Xiaoxiao Ma<sup>6</sup></span>,
+              <span>Yumin Li<sup>4</sup></span>,
+              <span>Yijun Liu<sup>5</sup></span>,
+              <span>Yaofeng Su<sup>7</sup></span>,
+              <span>Yanwen Ma<sup>8</sup></span>,
+              <span>Haoyu Wu<sup>4</sup></span>,
+              <span>Zihan Su<sup>5</sup></span>,
+              <span>Yue Ma<sup>1</sup></span>,
+              <span>Lvmin Zhang<sup>9</sup></span>,
+              <span>Haoyang Huang<sup>3</sup></span>,
+              <span>Anyi Rao<sup>1</sup></span>,
+              <span>Nan Duan<sup>3</sup></span>
+            </p>
+            <p class="hero-affiliations">
+              <span><sup>1</sup>HKUST</span>
+              <span><sup>2</sup>Peking University</span>
+              <span><sup>3</sup>JD Future Academy, JD</span>
+              <span><sup>4</sup>The University of Hong Kong</span>
+              <span><sup>5</sup>Tsinghua University</span>
+              <span><sup>6</sup>University of Science and Technology of China</span>
+              <span><sup>7</sup>Fudan University</span>
+              <span><sup>8</sup>Beihang University</span>
+              <span><sup>9</sup>Stanford University</span>
+            </p>
+          </div>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#demos">Explore the demos <span aria-hidden="true">↓</span></a>
+            <button class="button button-resource" type="button" disabled>Paper</button>
+            <a class="button button-resource" href="https://github.com/jd-opensource/JoyAI-Echo" target="_blank" rel="noreferrer">Code <span aria-hidden="true">↗</span></a>
+            <a class="button button-resource" href="https://huggingface.co/Echo-Team/Echo-WM" target="_blank" rel="noreferrer">Model <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="hero-signals" aria-label="Model capabilities">
+            <span><i></i> Native audio-visual output</span>
+            <span><i></i> First-person + third-person</span>
+            <span><i></i> Multi-turn continuation</span>
+          </div>
+        </div>
+        <div class="hero-foot">
+          <span>VIDEO / AUDIO / CONTROL</span>
+          <span>Scroll to enter <span aria-hidden="true">↓</span></span>
+        </div>
+      </section>
+
+      <section class="overview band-light" id="overview" aria-labelledby="overview-title">
+        <div class="section-shell overview-grid">
+          <div>
+            <p class="eyebrow eyebrow-dark">The idea</p>
+            <h2 id="overview-title">Content that responds.</h2>
+          </div>
+          <div class="overview-copy">
+            <p class="lead-copy">Generative models can synthesize high-quality video with sound and speech, yet interaction with generated content remains largely passive. EchoWM makes the generated scene enterable: a reference observation, a structured scene description, and a user control signal become the starting state for a world that keeps moving, sounding, and responding.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="audio-band" id="audio" aria-labelledby="audio-title">
+        <div class="section-shell">
+          <div class="section-heading section-heading-dark">
+            <div><p class="eyebrow eyebrow-mint">Audio is part of the state</p><h2 id="audio-title">Sound stays inside the world.</h2></div>
+            <p>Listen to the same rollouts that you watch. Environmental sound, music, and speech are generated with the scene and remain synchronized as the camera and subjects move.</p>
+          </div>
+          <div class="audio-feature-grid">
+            <article class="audio-feature">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/optimized/featured/audio/astronaut-blackhole.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="audio-feature-copy"><span class="media-index">01 / SPEECH</span><h3>Approaching the event horizon</h3><p>Radio static, life-support machinery, a low cosmic field, and a spoken line share the same trajectory.</p></div>
+            </article>
+            <article class="audio-feature">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/optimized/featured/audio/desolate_snow_covered_alien_landscape_action.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="audio-feature-copy"><span class="media-index">02 / SPEECH</span><h3>Voice across the snowfield</h3><p>Spoken voice, distant ambience, and movement remain synchronized through the generated scene.</p></div>
+            </article>
+            <article class="audio-feature">
+              <div class="video-frame"><video class="demo-video" data-src="https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/wm-on-screen-voice-cat.mp4?authorization=bce-auth-v1%2FALTAKrzbaeoF9qW4KrfkJNAAX3%2F2026-08-23T16%3A39%3A56Z%2F31536000%2Fhost%2F34a278625d881ce44424b6dd56c7602b902d85c6b33e89486ef0cd189f924711" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="audio-feature-copy"><span class="media-index">03 / ON-SCREEN VOICE</span><h3>Speech inside the scene</h3><p>Visible action and generated speech evolve together within the same audio-visual rollout.</p></div>
+            </article>
+            <article class="audio-feature">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/optimized/featured/audio/lone_traveler_stands_beside_turquoise_action (1).mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="audio-feature-copy"><span class="media-index">04 / ENVIRONMENT</span><h3>Traveler at the turquoise shore</h3><p>Environmental sound follows the traveler, landscape, and changing viewpoint as one generated world.</p></div>
+            </article>
+          </div>
+          <div class="audio-note"><span class="audio-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Native synchronized video + environmental sound + speech</span></div>
+        </div>
+      </section>
+
+      <section class="demos-band" id="demos" aria-labelledby="demos-title">
+        <div class="section-shell">
+          <div class="section-heading section-heading-light">
+            <div><p class="eyebrow eyebrow-coral">Selected demonstrations</p><h2 id="demos-title">Enter from any viewpoint.</h2></div>
+            <p>Six selected audio-visual rollouts show how the same camera-intent interface transfers across first-person motion, third-person subjects, and diverse generated worlds.</p>
+          </div>
+          <div class="demo-grid">
+            <article class="demo-card demo-card-wide">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/optimized/featured/viewpoint/forbidden_city.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">01 / TPP</span><h3>Paper flight over the Forbidden City</h3><p>Camera motion follows a lightweight subject across a large architectural environment.</p></div>
+            </article>
+            <article class="demo-card">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/optimized/featured/viewpoint/jungle_portal_robot (3).mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">02 / TPP</span><h3>Robot at the jungle portal</h3><p>Subject motion and camera evolution remain coherent inside a dense stylized world.</p></div>
+            </article>
+            <article class="demo-card">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/optimized/featured/viewpoint/ti2av_r000_demo424_d0223-wmb-t16_seed1_continuous_ui.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">03 / TPP</span><h3>Continuous camera--subject control</h3><p>A long rollout demonstrates coordinated viewpoint and subject evolution.</p></div>
+            </article>
+            <article class="demo-card">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/optimized/featured/viewpoint/ti2av_r003_wbench_c105-case_108_seed14_continuous_ui.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">04 / TPP</span><h3>WBench navigation case 108</h3><p>Continuous trajectory following is maintained over a long generated sequence.</p></div>
+            </article>
+            <article class="demo-card demo-card-wide">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/optimized/featured/viewpoint/bioluminescent_forest (4).mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">05 / TPP</span><h3>Bioluminescent forest</h3><p>Camera and subject motion remain coordinated through a dense, luminous environment.</p></div>
+            </article>
+            <article class="demo-card">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/optimized/featured/viewpoint/wingsuit.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">06 / FPP</span><h3>Above the ridge</h3><p>High-speed observer motion preserves a persistent visual and acoustic world.</p></div>
+            </article>
+            <div class="gallery-break">
+              <span>13 more favorited worlds</span>
+              <p>Every clip below includes native generated sound.</p>
+            </div>
+            <article class="demo-card">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/media/abandoned-room.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">07 / TPP + SPEECH</span><h3>The room left behind</h3><p>Creaking timber, broken-window wind, a toy engine, and a whispered question.</p></div>
+            </article>
+            <article class="demo-card demo-card-wide">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/media/alien-jungle.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">08 / TPP + SPEECH</span><h3>Alien jungle signal</h3><p>Shallow water, glowing flora, a crashed ship, and a voice inside the mist.</p></div>
+            </article>
+            <article class="demo-card demo-card-wide">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/media/biomech-horse.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">09 / TPP</span><h3>Biomechanical rider</h3><p>Metallic hoof impacts, distant explosions, fire, and low machinery hum.</p></div>
+            </article>
+            <article class="demo-card">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/media/dragon-forest.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">10 / TPP</span><h3>Bioluminescent flight</h3><p>Wingbeats move through a resonant forest of glowing trees and drifting mist.</p></div>
+            </article>
+            <article class="demo-card">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/media/bloodstream.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">11 / TPP + SPEECH</span><h3>Inside the bloodstream</h3><p>Thrusters cut through biological flow, organic resonance, and a pilot's murmur.</p></div>
+            </article>
+            <article class="demo-card demo-card-wide">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/media/cosmic-train.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">12 / TPP + SPEECH</span><h3>Train at the void</h3><p>Steam, locomotive rumble, cosmic wind, and an engineer approaching the unknown.</p></div>
+            </article>
+            <article class="demo-card demo-card-wide">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/media/cyberpunk-portal.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">13 / TPP</span><h3>Cyberpunk threshold</h3><p>Forward motion carries the scene and its urban energy through a luminous portal.</p></div>
+            </article>
+            <article class="demo-card">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/media/desert-rider.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">14 / TPP + SPEECH</span><h3>Desert passage</h3><p>Soft footfalls and sparse wind lead toward a structure buried in the cliffs.</p></div>
+            </article>
+            <article class="demo-card">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/media/palace-flight.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">15 / TPP + SPEECH</span><h3>Above the palace</h3><p>Wind, distant birds, soft chimes, and a child's voice cross the sunset skyline.</p></div>
+            </article>
+            <article class="demo-card demo-card-wide">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/media/mushroom-buggy.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">16 / TPP</span><h3>Mushroom route</h3><p>Engine revs and tires on dirt animate a saturated forest at oversized scale.</p></div>
+            </article>
+            <article class="demo-card demo-card-wide">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/media/sky-islands.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">17 / TPP + SPEECH</span><h3>Crystal sky islands</h3><p>Wind threads through crystal formations while wings echo across open air.</p></div>
+            </article>
+            <article class="demo-card">
+              <div class="video-frame"><video class="demo-video" data-src="https://www.senluopan.com/f/Yq5gUZ/shot_01.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">18 / TPP</span><h3>Snowball mountain</h3><p>A remote snowy world with motion, atmosphere, and sound generated as one scene.</p></div>
+            </article>
+            <article class="demo-card">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/media/jungle-temple.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="demo-card-meta"><span class="media-index">19 / FPP</span><h3>Temple compass</h3><p>First-person travel through leaves, bird calls, and dripping jungle moisture.</p></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="runs-band" id="runs" aria-labelledby="runs-title">
+        <div class="section-shell">
+          <div class="section-heading section-heading-light">
+            <div><p class="eyebrow eyebrow-coral">Capability chapters / selected runs</p><h2 id="runs-title">Four ways to enter a world.</h2></div>
+            <p>The gallery follows the project proof structure: first-person world coverage, third-person camera--subject control, native audio-visual generation, and multi-turn viewpoint continuation.</p>
+          </div>
+          <div class="chapter-results" id="chapter-results" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="method-band band-light" id="method" aria-labelledby="method-title">
+        <div class="section-shell method-grid">
+          <div><p class="eyebrow eyebrow-dark">How it works</p><h2 id="method-title">One intent.<br />Many worlds.</h2></div>
+          <div class="method-rail">
+            <div class="method-step"><span>01</span><div><h3>Camera intent</h3><p>Discrete commands and continuous poses become one metric-scale relative 6-DoF trajectory across first- and third-person scenes.</p></div></div>
+            <div class="method-step"><span>02</span><div><h3>Omnimodal response</h3><p>The model jointly generates 720p video, environmental sound, music, and speech instead of adding audio after visual synthesis.</p></div></div>
+            <div class="method-step"><span>03</span><div><h3>Long-horizon world</h3><p>A complementary data engine, progressive training, and autoregressive post-training support continuous navigation and multi-turn continuation.</p></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="results-band" id="results" aria-labelledby="results-title">
+        <div class="section-shell">
+          <div class="section-heading section-heading-light">
+            <div><p class="eyebrow eyebrow-coral">Evaluation</p><h2 id="results-title">Strong control.<br />Synchronized worlds.</h2></div>
+            <p>EchoWM combines trajectory following with high-quality visual generation and native audio. On WBench it leads the navigation split by average score, while pairwise user studies show a clear preference for EchoWM on overall quality and semantic following.</p>
+          </div>
+          <div class="results-highlight" aria-label="Evaluation highlights">
+            <div><strong>81.7</strong><span>WBench average</span></div>
+            <div><strong>87.2</strong><span>interaction score</span></div>
+            <div><strong>46.50%</strong><span>overall preference vs. LingBot</span></div>
+            <div><strong>63.13%</strong><span>overall preference vs. HappyOyster</span></div>
+          </div>
+
+          <div class="results-table-block">
+            <div class="table-heading"><span class="media-index">TABLE 01</span><h3>WBench navigation</h3><p>Comparison on the 158-case WBench Navigation split. Results are sorted by average.</p></div>
+            <div class="table-scroll">
+              <table class="results-table results-table-wbench">
+                <caption>Comparison on the 158-case WBench Navigation split.</caption>
+                <thead><tr><th scope="col">Model</th><th scope="col">Avg.</th><th scope="col">Quality</th><th scope="col">Setting</th><th scope="col">Interaction</th><th scope="col">Consistency</th><th scope="col">Physical</th></tr></thead>
+                <tbody>
+                  <tr class="model-row"><th scope="row">EchoWM</th><td><strong>81.7</strong></td><td>81.5</td><td>79.4</td><td><strong>87.2</strong></td><td><u>89.8</u></td><td>70.6</td></tr>
+                  <tr><th scope="row">HiDream-O1-World</th><td><u>80.9</u></td><td>81.0</td><td>82.2</td><td>80.0</td><td>88.0</td><td><strong>73.3</strong></td></tr>
+                  <tr><th scope="row">Alaya-EVOKE</th><td>80.8</td><td><strong>82.8</strong></td><td>83.8</td><td>78.6</td><td>86.9</td><td><u>72.1</u></td></tr>
+                  <tr><th scope="row">LingBot-World (fast v2)</th><td>79.4</td><td>81.8</td><td>76.8</td><td>82.8</td><td>86.5</td><td>69.1</td></tr>
+                  <tr><th scope="row">Kling 3.0</th><td>79.0</td><td>81.4</td><td>91.0</td><td>69.4</td><td>83.7</td><td>69.3</td></tr>
+                  <tr><th scope="row">LingBot-World (base-camera)</th><td>78.5</td><td>78.9</td><td>72.6</td><td>80.1</td><td><strong>89.9</strong></td><td>71.2</td></tr>
+                  <tr><th scope="row">Wan 2.7</th><td>78.1</td><td>81.5</td><td><u>91.4</u></td><td>64.4</td><td>81.6</td><td>71.8</td></tr>
+                  <tr><th scope="row">HY-World 1.5 (AR-distill)</th><td>78.1</td><td>78.1</td><td>72.2</td><td><u>86.8</u></td><td>86.9</td><td>66.3</td></tr>
+                  <tr><th scope="row">HY-Video 1.5</th><td>77.9</td><td>77.6</td><td>85.6</td><td>71.4</td><td>87.4</td><td>67.4</td></tr>
+                  <tr><th scope="row">LingBot-World (fast)</th><td>77.4</td><td>79.4</td><td>77.9</td><td>79.2</td><td>84.9</td><td>65.7</td></tr>
+                  <tr><th scope="row">HappyOyster</th><td>76.8</td><td>77.3</td><td>74.2</td><td>84.9</td><td>84.3</td><td>63.5</td></tr>
+                  <tr><th scope="row">Lyra 2.0 (4-step AR)</th><td>76.4</td><td>77.1</td><td>73.2</td><td>85.6</td><td>79.3</td><td>66.7</td></tr>
+                  <tr><th scope="row">Seedance 1.5</th><td>76.2</td><td><u>82.1</u></td><td>82.9</td><td>66.3</td><td>81.3</td><td>68.4</td></tr>
+                  <tr><th scope="row">Cosmos3-Super</th><td>76.0</td><td>76.4</td><td><strong>91.6</strong></td><td>58.0</td><td>85.0</td><td>69.2</td></tr>
+                  <tr><th scope="row">SANA-WM (4-step AR)</th><td>76.0</td><td>79.3</td><td>76.1</td><td>82.2</td><td>80.7</td><td>61.9</td></tr>
+                  <tr><th scope="row">DreamX-World (5B AR)</th><td>75.0</td><td>77.5</td><td>80.8</td><td>78.6</td><td>74.9</td><td>63.3</td></tr>
+                  <tr><th scope="row">ABot-World</th><td>74.7</td><td>76.8</td><td>71.4</td><td>84.0</td><td>79.5</td><td>61.7</td></tr>
+                  <tr><th scope="row">Cosmos 2.5</th><td>74.6</td><td>72.9</td><td>83.3</td><td>63.1</td><td>86.5</td><td>67.4</td></tr>
+                  <tr><th scope="row">Cosmos3-Nano</th><td>74.2</td><td>77.4</td><td>87.3</td><td>59.1</td><td>83.7</td><td>63.6</td></tr>
+                  <tr><th scope="row">LTX-2.3</th><td>74.2</td><td>77.1</td><td>85.2</td><td>66.4</td><td>77.2</td><td>64.9</td></tr>
+                  <tr><th scope="row">Genie 3</th><td>73.9</td><td>75.2</td><td>72.5</td><td>73.4</td><td>82.6</td><td>65.7</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="results-table-block">
+            <div class="table-heading"><span class="media-index">TABLE 02</span><h3>Pairwise user study</h3><p>Aggregate judgments over 200 cases. “Both good” and “both bad” preserve the two distinct same-quality outcomes.</p></div>
+            <div class="table-scroll">
+              <table class="results-table results-table-study">
+                <caption>Aggregate pairwise user-study judgments over 200 cases. Each cell reports the percentage of judgments.</caption>
+                <thead><tr><th scope="col">Competitor</th><th scope="col">Dimension</th><th scope="col">Competitor preferred</th><th scope="col">Both good</th><th scope="col">Both bad</th><th scope="col">EchoWM preferred</th></tr></thead>
+                <tbody>
+                  <tr class="group-start"><th scope="row" rowspan="6">LingBot-World-v2</th><th scope="row">Semantic following</th><td>15.14%</td><td>24.93%</td><td>25.93%</td><td><strong>34.00%</strong></td></tr>
+                  <tr><th scope="row">Initial-world consistency</th><td>7.71%</td><td>62.36%</td><td>15.29%</td><td><strong>14.64%</strong></td></tr>
+                  <tr><th scope="row">Motion</th><td>20.00%</td><td>13.71%</td><td>41.00%</td><td><strong>25.29%</strong></td></tr>
+                  <tr><th scope="row">Spatial-temporal consistency</th><td>14.71%</td><td>27.36%</td><td>25.29%</td><td><strong>32.64%</strong></td></tr>
+                  <tr><th scope="row">Visual aesthetics</th><td>19.93%</td><td>28.00%</td><td>19.57%</td><td><strong>32.50%</strong></td></tr>
+                  <tr><th scope="row">Overall preference</th><td>21.57%</td><td>4.21%</td><td>27.71%</td><td><strong>46.50%</strong></td></tr>
+                  <tr class="group-start"><th scope="row" rowspan="6">HappyOyster</th><th scope="row">Semantic following</th><td>29.44%</td><td>51.50%</td><td>5.44%</td><td>13.63%</td></tr>
+                  <tr><th scope="row">Initial-world consistency</th><td>15.44%</td><td>42.81%</td><td>2.25%</td><td><strong>39.50%</strong></td></tr>
+                  <tr><th scope="row">Motion</th><td>24.56%</td><td>11.88%</td><td>44.63%</td><td>18.94%</td></tr>
+                  <tr><th scope="row">Spatial-temporal consistency</th><td>10.44%</td><td>18.19%</td><td>13.69%</td><td><strong>57.69%</strong></td></tr>
+                  <tr><th scope="row">Visual aesthetics</th><td>23.81%</td><td>1.13%</td><td>22.19%</td><td><strong>52.88%</strong></td></tr>
+                  <tr><th scope="row">Overall preference</th><td>27.06%</td><td>2.19%</td><td>7.63%</td><td><strong>63.13%</strong></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="abstract-band band-light" id="abstract" aria-labelledby="abstract-title">
+        <div class="section-shell abstract-grid">
+          <div>
+            <p class="eyebrow eyebrow-dark">Abstract</p>
+            <h2 id="abstract-title">An enterable model for generative media.</h2>
+          </div>
+          <div class="abstract-copy">
+            <p>Generative models can synthesize high-quality video with sound and speech, yet interaction with generated content remains largely passive; interactive world models support continuous control but are typically silent or tied to specific embodiments and action spaces.</p>
+            <p>We introduce <strong>EchoWM</strong>, an omnimodal world model for enterable generative media that responds to continuous navigation while jointly generating 720p video, environmental sound, music, and speech.</p>
+            <p>We organize interaction around camera intent: in first-person scenes, it specifies observer motion, while in third-person scenes, camera--character dynamics are learned from data without view-specific controllers. Discrete commands and continuous poses are mapped to a shared metric-scale relative 6-DoF trajectory, with dataset-level calibration preserving motion magnitude across heterogeneous data.</p>
+            <p>To jointly learn audio-visual generation and trajectory control, we construct a complementary data engine and adopt progressive training followed by autoregressive post-training for long-horizon generation.</p>
+            <p>Extensive evaluations show that <strong>EchoWM</strong> achieves strong trajectory following and high visual quality on public world-model benchmarks, generalizes across real, game, and stylized environments, supports first- and third-person interaction across varied subjects, and maintains synchronized environmental sound and speech over long-horizon generation.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="closing-band" aria-labelledby="closing-title">
+        <div class="section-shell closing-inner">
+          <p class="eyebrow eyebrow-mint">From content to participation</p>
+          <h2 id="closing-title">Watch less.<br /><em>Enter more.</em></h2>
+          <p>EchoWM turns generative media from something watched into a world that can be entered, steered, and heard evolving over time.</p>
+          <a class="button button-primary" href="#citation">Read the work <span aria-hidden="true">↓</span></a>
+        </div>
+      </section>
+
+      <section class="citation-band" id="citation" aria-labelledby="citation-title">
+        <div class="section-shell citation-grid">
+          <div><p class="eyebrow eyebrow-dark">EchoWM</p><h2 id="citation-title">Open and Enterable Omnimodal World Models</h2><p class="citation-authors">Research project / 2026</p><div class="citation-actions"><a class="text-link" href="#top">Back to top ↑</a></div></div>
+          <div class="bibtex"><div class="bibtex-head"><span>BibTeX</span><button id="copy-bibtex" type="button">Copy</button></div><pre id="bibtex-code">@misc{echowm2026,
+  title={EchoWM: Open and Enterable Omnimodal World Models},
+  year={2026},
+  note={Research project},
+}</pre></div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

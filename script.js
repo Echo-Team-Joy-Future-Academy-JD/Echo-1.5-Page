@@ -1,6 +1,9 @@
 import {
+  getActiveMemoryDemoCase,
   getMemoryProvider,
+  memoryDemoCases,
   memoryDemoConfig,
+  setActiveMemoryDemoCase,
 } from "./memory-demo-data.js";
 import { AmbientGlow } from "video-ambient-glow";
 import "./Echo-LongVideo-Page-1.0/assets/case-sections.js";
@@ -480,7 +483,12 @@ const initMemoryParticleDemo = (demo) => {
   const particleLayer = demo.querySelector("[data-memory-particle-layer]");
   const videoTerminal = demo.querySelector(".video-terminal");
   const video = demo.querySelector("[data-memory-video]");
+  const videoSource = video?.querySelector("source");
   const playbackProgress = demo.querySelector("[data-memory-playback-progress]");
+  const casePrevious = demo.querySelector("[data-memory-case-prev]");
+  const caseNext = demo.querySelector("[data-memory-case-next]");
+  const casePreviousPoster = demo.querySelector("[data-memory-case-prev-poster]");
+  const caseNextPoster = demo.querySelector("[data-memory-case-next-poster]");
   const memoryControls = demo.closest(".memory-intro-stage")?.querySelector("[data-memory-controls]");
   const popcornControl = memoryControls?.querySelector("[data-popcorn-control]");
   const controlsMenu = memoryControls?.querySelector(".memory-controls-menu");
@@ -492,6 +500,10 @@ const initMemoryParticleDemo = (demo) => {
   const particles = [];
   const pointer = { x: 0, y: 0, active: false };
   let currentShot = -1;
+  let activeMemoryCaseIndex = Math.max(
+    memoryDemoCases.indexOf(getActiveMemoryDemoCase()),
+    0,
+  );
   let renderVersion = 0;
   let activeAudioNode = null;
   let lastPhysicsTime = performance.now();
@@ -520,27 +532,46 @@ const initMemoryParticleDemo = (demo) => {
   demo.dataset.conditionVisible = "true";
   const progressTicks = [];
   const isCompactGlow = window.matchMedia("(max-width: 560px)").matches;
-  const ambientGlow = video
-    ? new AmbientGlow(video, {
-      blur: isCompactGlow ? 48 : 64,
-      opacity: 0.62,
-      brightness: 0.76,
-      saturate: isCompactGlow ? 1.52 : 1.62,
-      scale: 1.06,
-      downscale: isCompactGlow ? 0.04 : 0.05,
-      updateInterval: isCompactGlow ? 120 : 90,
-      responsiveness: 0.08,
-    })
-    : null;
-  const videoGlow = ambientGlow?.canvas ?? null;
+  const ambientGlowOptions = {
+    blur: isCompactGlow ? 48 : 64,
+    opacity: 0.62,
+    brightness: 0.76,
+    saturate: isCompactGlow ? 1.52 : 1.62,
+    scale: 1.06,
+    downscale: isCompactGlow ? 0.04 : 0.05,
+    updateInterval: isCompactGlow ? 120 : 90,
+    responsiveness: 0.08,
+  };
+  let ambientGlow = null;
+  let videoGlow = null;
 
-  if (videoGlow) {
-    videoGlow.className = "video-glow";
-    videoGlow.dataset.memoryVideoGlow = "";
-    videoGlow.dataset.renderer = "ambient-glow";
-    videoGlow.dataset.targetFps = String(Math.round(1000 / (isCompactGlow ? 120 : 90)));
-  }
-  demo.dataset.renderer = "ambient-glow";
+  const configureAmbientGlow = (sourceUrl) => {
+    if (!video) return;
+    const sourceOrigin = new URL(sourceUrl, document.baseURI).origin;
+    const isCrossOrigin = sourceOrigin !== window.location.origin;
+
+    if (isCrossOrigin) {
+      video.removeAttribute("crossorigin");
+      ambientGlow?.destroy();
+      ambientGlow = null;
+      videoGlow = null;
+      demo.dataset.renderer = "video-only";
+      return;
+    }
+
+    video.crossOrigin = "anonymous";
+    if (!ambientGlow) {
+      ambientGlow = new AmbientGlow(video, ambientGlowOptions);
+      videoGlow = ambientGlow.canvas;
+      videoGlow.className = "video-glow";
+      videoGlow.dataset.memoryVideoGlow = "";
+      videoGlow.dataset.renderer = "ambient-glow";
+      videoGlow.dataset.targetFps = String(Math.round(1000 / ambientGlowOptions.updateInterval));
+    }
+    demo.dataset.renderer = "ambient-glow";
+  };
+
+  configureAmbientGlow(memoryDemoConfig.video.src);
 
   audioMemoryPlayer.preload = "metadata";
 
@@ -795,6 +826,17 @@ const initMemoryParticleDemo = (demo) => {
     if (stageMetricsCache) return stageMetricsCache;
     const stageRect = stage.getBoundingClientRect();
     const videoRect = videoTerminal.getBoundingClientRect();
+    const caseReelObstacles = [casePrevious, caseNext]
+      .filter(Boolean)
+      .map((element) => {
+        const disc = element.querySelector(".memory-case-reel-disc") || element;
+        const rect = disc.getBoundingClientRect();
+        return {
+          x: rect.left - stageRect.left + rect.width / 2,
+          y: rect.top - stageRect.top + rect.height / 2,
+          radius: Math.min(rect.width, rect.height) / 2 + 12,
+        };
+      });
     stageMetricsCache = {
       width: stageRect.width,
       height: stageRect.height,
@@ -802,6 +844,7 @@ const initMemoryParticleDemo = (demo) => {
       centerY: videoRect.top - stageRect.top + videoRect.height / 2,
       videoHalfWidth: videoRect.width / 2,
       videoHalfHeight: videoRect.height / 2,
+      caseReelObstacles,
     };
     return stageMetricsCache;
   };
@@ -827,7 +870,46 @@ const initMemoryParticleDemo = (demo) => {
     bottom: metrics.centerY + metrics.videoHalfHeight + padding + shape.halfHeight,
   });
 
+  const getCapsuleObstacleCollision = (particle, obstacle, metrics) => {
+    const pairX = particle.x - obstacle.x;
+    const pairY = particle.y - obstacle.y;
+    let collisionX = Math.sign(pairX || 1) * Math.max(
+      Math.abs(pairX) - particle.segmentHalf,
+      0,
+    );
+    let collisionY = pairY;
+    let distance = Math.hypot(collisionX, collisionY);
+
+    if (distance < 0.001) {
+      collisionX = obstacle.x <= metrics.width / 2 ? 1 : -1;
+      collisionY = 0;
+      distance = 0.001;
+    }
+
+    return {
+      distance,
+      normalX: collisionX / distance,
+      normalY: collisionY / distance,
+    };
+  };
+
   const constrainParticle = (particle, metrics) => {
+    metrics.caseReelObstacles.forEach((obstacle) => {
+      const collision = getCapsuleObstacleCollision(particle, obstacle, metrics);
+      const minimumDistance = particle.radius + obstacle.radius + 10;
+      if (collision.distance >= minimumDistance) return;
+
+      const overlap = minimumDistance - collision.distance;
+      particle.x += collision.normalX * overlap;
+      particle.y += collision.normalY * overlap;
+      const normalVelocity = particle.vx * collision.normalX
+        + particle.vy * collision.normalY;
+      if (normalVelocity < 0) {
+        particle.vx -= (1 + edgeRestitution) * normalVelocity * collision.normalX;
+        particle.vy -= (1 + edgeRestitution) * normalVelocity * collision.normalY;
+      }
+    });
+
     const minX = particle.halfWidth + 10;
     const maxX = metrics.width - particle.halfWidth - 10;
     const minY = particle.halfHeight + 10;
@@ -1385,6 +1467,69 @@ const initMemoryParticleDemo = (demo) => {
     );
   };
 
+  const renderMemoryCaseSwitcher = () => {
+    const activeCase = memoryDemoCases[activeMemoryCaseIndex];
+    if (!activeCase) return;
+    const previousCase = memoryDemoCases[
+      (activeMemoryCaseIndex - 1 + memoryDemoCases.length) % memoryDemoCases.length
+    ];
+    const nextCase = memoryDemoCases[
+      (activeMemoryCaseIndex + 1) % memoryDemoCases.length
+    ];
+    if (casePreviousPoster) casePreviousPoster.src = previousCase.video.poster;
+    if (caseNextPoster) caseNextPoster.src = nextCase.video.poster;
+    if (casePrevious) {
+      casePrevious.setAttribute("aria-label", `Previous cover video: ${previousCase.title}`);
+    }
+    if (caseNext) {
+      caseNext.setAttribute("aria-label", `Next cover video: ${nextCase.title}`);
+    }
+    if (video) video.setAttribute("aria-label", `Play or pause ${activeCase.title}`);
+  };
+
+  const animateCaseReel = (reel) => {
+    if (!reel) return;
+    reel.classList.remove("is-spinning");
+    window.requestAnimationFrame(() => reel.classList.add("is-spinning"));
+    window.setTimeout(() => reel.classList.remove("is-spinning"), 620);
+  };
+
+  const switchMemoryCase = (nextIndex) => {
+    if (!video || !videoSource || memoryDemoCases.length < 2) return;
+    const normalizedIndex = (
+      (nextIndex % memoryDemoCases.length) + memoryDemoCases.length
+    ) % memoryDemoCases.length;
+    if (normalizedIndex === activeMemoryCaseIndex) return;
+
+    activeMemoryCaseIndex = normalizedIndex;
+    const activeCase = setActiveMemoryDemoCase(activeMemoryCaseIndex);
+    const shouldResume = !manuallyPaused && memoryPageActive;
+    currentShot = -1;
+    renderVersion += 1;
+    stopAudioPreview();
+    retireParticles();
+    renderMemoryCaseSwitcher();
+
+    configureAmbientGlow(activeCase.video.src);
+    videoSource.src = activeCase.video.src;
+    video.poster = activeCase.video.poster;
+    video.load();
+    updatePlaybackProgress();
+    loadShotMemoryList(0);
+
+    if (shouldResume) {
+      video.addEventListener("canplay", () => video.play().catch(() => {}), { once: true });
+    }
+
+    window.dispatchEvent(new CustomEvent("echo:memory-case-change", {
+      detail: {
+        caseIndex: activeMemoryCaseIndex,
+        caseId: activeCase.id,
+        title: activeCase.title,
+      },
+    }));
+  };
+
   window.addEventListener("echo:condition-visibility", (event) => {
     const enabled = Boolean(event.detail?.enabled);
     if (enabled === conditionVisible) return;
@@ -1473,6 +1618,15 @@ const initMemoryParticleDemo = (demo) => {
         forceY += deadZoneDy * strength;
       }
 
+      metrics.caseReelObstacles.forEach((obstacle) => {
+        const collision = getCapsuleObstacleCollision(particle, obstacle, metrics);
+        const repelDistance = particle.radius + obstacle.radius + 42;
+        if (collision.distance >= repelDistance) return;
+        const strength = (1 - collision.distance / repelDistance) * 0.36;
+        forceX += collision.normalX * strength;
+        forceY += collision.normalY * strength;
+      });
+
       liveParticles.forEach((other) => {
         if (other === particle) return;
         const pairX = particle.x - other.x;
@@ -1559,6 +1713,17 @@ const initMemoryParticleDemo = (demo) => {
     progressTrackStart = 0;
     progressTrackWidth = 0;
   }, { passive: true });
+  [casePrevious, caseNext].filter(Boolean).forEach((caseReel) => {
+    const invalidateStageMetrics = () => {
+      stageMetricsCache = null;
+      window.requestAnimationFrame(() => {
+        stageMetricsCache = null;
+      });
+    };
+    caseReel.addEventListener("pointerenter", invalidateStageMetrics, { passive: true });
+    caseReel.addEventListener("pointerleave", invalidateStageMetrics, { passive: true });
+    caseReel.addEventListener("transitionend", invalidateStageMetrics, { passive: true });
+  });
 
   audioMemoryPlayer.addEventListener("ended", stopAudioPreview);
   audioMemoryPlayer.addEventListener("pause", () => {
@@ -1566,8 +1731,7 @@ const initMemoryParticleDemo = (demo) => {
   });
 
   if (video) {
-    const source = video.querySelector("source");
-    if (source) source.src = memoryDemoConfig.video.src;
+    if (videoSource) videoSource.src = memoryDemoConfig.video.src;
     video.controls = false;
     video.autoplay = true;
     video.loop = true;
@@ -1619,6 +1783,16 @@ const initMemoryParticleDemo = (demo) => {
     window.addEventListener("pointerdown", resumeDefaultSoundPlayback, { capture: true });
     window.addEventListener("keydown", resumeDefaultSoundPlayback, { capture: true });
   }
+
+  casePrevious?.addEventListener("click", () => {
+    animateCaseReel(casePrevious);
+    switchMemoryCase(activeMemoryCaseIndex - 1);
+  });
+  caseNext?.addEventListener("click", () => {
+    animateCaseReel(caseNext);
+    switchMemoryCase(activeMemoryCaseIndex + 1);
+  });
+  renderMemoryCaseSwitcher();
 
   setToggleState(soundToggle, video ? !video.muted : true);
   setToggleState(conditionToggle, conditionVisible);

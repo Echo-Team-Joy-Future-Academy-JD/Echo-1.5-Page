@@ -40,7 +40,12 @@ next-env.d.ts
 /.wrangler/
 /outputs/
 /work/
-/public/media/
+/public/media/*
+!/public/media/radio/
+!/public/media/source/
+/public/media/source/*
+!/public/media/source/radio-poster.jpg
+/public/wm/assets/
 
 /Echo-LongVideo-Page-1.0/.git/
 /Echo-LongVideo-Page-1.0/assets/long/

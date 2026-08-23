@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en" class="video-bg-root" data-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="JoyAI-Echo-1.5 long-horizon audio-visual generation for persistent multi-shot stories.">
+    <meta name="keywords" content="JoyAI-Echo-1.5, long video generation, audio-visual generation, cross-shot consistency, persistent stories">
+    <title>JoyAI-Echo-1.5 · Long-Horizon Audio-Visual Generation</title>
+    <link rel="icon" href="data:,">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <script type="module" src="../script.js"></script>
+</head>
+<body class="video-bg-page echo-15-integrated">
+    <div class="global-video-bg" aria-hidden="true">
+      <div class="global-video-tint"></div>
+    </div>
+
+    <header class="site-nav" aria-label="Primary navigation">
+        <nav class="nav-links" aria-label="Page sections">
+            <a href="#abstract">Abstract</a>
+            <a href="#conclusions">Conclusions</a>
+            <a href="#results">Results</a>
+            <a href="#contributors">Authors</a>
+            <a href="#bibtex">BibTeX</a>
+        </nav>
+    </header>
+
+    <main id="top">
+      <section id="paper" class="intro-hero-stage" aria-label="Echo 1.5 overview" data-intro-stage>
+        <div class="intro-stage-sticky">
+          <div id="memory" class="memory-home memory-home-clean memory-intro-stage" aria-label="Echo 1.5 memory replay">
+            <article class="memory-inference memory-stage-only" data-memory-demo>
+              <div class="inference-board">
+                <div
+                  class="memory-particle-layer"
+                  data-memory-particle-layer
+                  aria-label="Image and audio memories from the previous shot"
+                ></div>
+
+                <div class="video-terminal">
+                  <video
+                    data-memory-video
+                    crossorigin="anonymous"
+                    tabindex="0"
+                    aria-label="Play or pause Echo 1.5 video"
+                    autoplay
+                    loop
+                    playsinline
+                    preload="metadata"
+                    poster="../media/source/the-last-visa-poster.jpg"
+                  >
+                    <source
+                      src="../media/source/the-last-visa.mp4"
+                      type="video/mp4"
+                    />
+                  </video>
+                  <div
+                    class="memory-playback-progress"
+                    data-memory-playback-progress
+                    role="slider"
+                    tabindex="0"
+                    aria-label="Video playback progress"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow="0"
+                  ></div>
+                </div>
+                <div class="memory-case-reels" aria-label="Cover video cases">
+                  <button
+                    class="memory-case-reel memory-case-reel-prev"
+                    type="button"
+                    aria-label="Previous cover video"
+                    data-memory-case-prev
+                  >
+                    <span class="memory-case-reel-disc" aria-hidden="true">
+                      <img data-memory-case-prev-poster alt="" />
+                      <i></i>
+                    </span>
+                    <span class="memory-case-reel-copy">
+                      <span>Prev</span>
+                    </span>
+                  </button>
+                  <button
+                    class="memory-case-reel memory-case-reel-next"
+                    type="button"
+                    aria-label="Next cover video"
+                    data-memory-case-next
+                  >
+                    <span class="memory-case-reel-disc" aria-hidden="true">
+                      <img data-memory-case-next-poster alt="" />
+                      <i></i>
+                    </span>
+                    <span class="memory-case-reel-copy">
+                      <span>Next</span>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </article>
+            <div class="memory-controls" data-memory-controls>
+              <div class="memory-controls-menu" id="memory-controls-menu" aria-hidden="true" inert>
+                <button
+                  class="memory-control-option"
+                  type="button"
+                  role="switch"
+                  aria-checked="true"
+                  data-sound-toggle
+                >
+                  <span>Sound</span>
+                  <i aria-hidden="true"></i>
+                </button>
+                <button
+                  class="memory-control-option"
+                  type="button"
+                  role="switch"
+                  aria-checked="true"
+                  data-condition-toggle
+                >
+                  <span>Condition</span>
+                  <i aria-hidden="true"></i>
+                </button>
+              </div>
+              <button
+                class="popcorn-control"
+                type="button"
+                aria-label="Open memory controls"
+                aria-expanded="false"
+                aria-controls="memory-controls-menu"
+                data-popcorn-control
+              >
+                <svg viewBox="0 0 56 64" fill="none" aria-hidden="true">
+                  <g class="popcorn-kernels">
+                    <path class="popcorn-kernel popcorn-kernel-1" d="M12 21c-4-2-4-8 0-10 2-1 4 0 6 1 0-5 4-8 8-6 2 1 3 3 3 5 3-4 9-3 10 1 1 2 0 4-1 6 5-2 9 2 8 7-1 4-4 6-8 6H18c-5 0-8-5-6-10Z"/>
+                    <path class="popcorn-kernel popcorn-kernel-2" d="M18 18c1-3 4-5 7-3 1-4 7-4 8 0 3-2 7 0 7 4"/>
+                    <path class="popcorn-kernel popcorn-kernel-3" d="M15 25c2-3 5-4 8-2 2-4 8-3 9 1 3-3 8-1 9 3"/>
+                  </g>
+                  <path class="popcorn-box" d="M14 28h29l-4 29H19l-5-29Z"/>
+                  <path class="popcorn-stripe" d="m21 30 2 25M36 30l-3 25M28.5 30v25"/>
+                  <path class="popcorn-rim" d="M12 27h33"/>
+                </svg>
+              </button>
+              <span
+                class="popcorn-speech"
+                role="status"
+                aria-live="polite"
+                aria-hidden="true"
+                data-popcorn-speech
+              >no more...</span>
+            </div>
+            <a
+              class="intro-scroll-mark memory-scroll-mark"
+              href="#abstract"
+              aria-label="Scroll to the technical content"
+            ></a>
+          </div>
+
+          <div class="intro-next-hero" data-intro-next>
+            <div class="hero-content intro-hero-content">
+              <p class="paper-meta">Technical Report | August 2026 | Echo Team @ Joy Future Academy, JD</p>
+              <h1><span class="hero-title-brand">JoyAI-Echo-1.5</span>: <span class="hero-title-keep">Long-Horizon</span> <span class="hero-title-keep">Audio-Visual</span> Generation for Persistent Stories</h1>
+              <p class="hero-copy">
+                A long-video system that preserves character appearance, speaker identity,
+                narrative continuity, and synchronized sound across multi-shot stories.
+              </p>
+              <div class="hero-actions">
+                <a class="btn btn-primary" href="../JoyAI_Echo_1_5.pdf" target="_blank" rel="noopener">Paper</a>
+                <a class="btn btn-secondary" href="https://github.com/jd-opensource/JoyAI-Echo">Code</a>
+              </div>
+            </div>
+
+            <div class="hero-metrics intro-hero-metrics" aria-label="Key highlights">
+              <div>
+                <strong>10 min+</strong>
+                <span>long-horizon generation</span>
+              </div>
+              <div>
+                <strong>A/V Memory</strong>
+                <span>cross-shot identity &amp; voice</span>
+              </div>
+              <div>
+                <strong>6-DoF</strong>
+                <span>metric camera control</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+        <div class="content-scroll-shell" aria-label="Echo 1.5 technical content">
+            <section id="abstract" class="section">
+                <div class="container">
+                    <div class="section-header fade-in-up">
+                        <h2>Abstract</h2>
+                    </div>
+                    <p class="abstract-text fade-in-up">
+                        Video generation is moving beyond isolated clips toward persistent long-form narratives, where
+                        characters, voices, events, and sound must remain coherent across many shots. We present the
+                        long-video variant of <strong>JoyAI-Echo-1.5</strong>, a unified audio-visual generation system
+                        built around composable cross-shot memory. It aggregates visual evidence from multiple prior
+                        shots and speaker cues from speech-filtered full-shot audio, preserving appearance and voice
+                        identity while supporting flexible text, image, and memory conditioning. A causal few-step
+                        generator, trained with progressive audio-visual teacher forcing and short- and long-horizon
+                        Self-Gradient Forcing on self-generated rollouts, improves stability over extended generation.
+                        On a benchmark of 100 stories and 3,000 shots, JoyAI-Echo-1.5 achieves the best result on six of
+                        seven automatic metrics, covering cross-shot consistency, imaging quality, text alignment, and
+                        speech fidelity. Human evaluation further favors JoyAI-Echo-1.5 over HappyOyster across all five
+                        long-video dimensions, with the largest margin in audio-visual synchronization.
+                    </p>
+                </div>
+            </section>
+
+        <section id="conclusions" class="section section-alt">
+            <div class="container-wide">
+                <div class="section-header fade-in-up">
+                    <h2>Key Conclusions</h2>
+                </div>
+                <div class="conclusion-grid">
+                    <article class="conclusion-card fade-in-up">
+                        <span>01</span>
+                        <h3>Identity persists across distant shots.</h3>
+                        <p>Composable visual and speech-filtered audio memory delivers the strongest ViCLIP, Self-CIDS, and speaker-consistency scores among all evaluated systems.</p>
+                    </article>
+                    <article class="conclusion-card fade-in-up">
+                        <span>02</span>
+                        <h3>Consistency does not trade away instruction following.</h3>
+                        <p>JoyAI-Echo-1.5 reaches the best CLIP score of 0.2868 while preserving changing actions, scenes, camera views, and shot-specific narrative details.</p>
+                    </article>
+                    <article class="conclusion-card fade-in-up">
+                        <span>03</span>
+                        <h3>Audio and video remain one coherent timeline.</h3>
+                        <p>Joint generation achieves 0.9674 speech recall and a 28.1-point human-preference lead over HappyOyster in audio-visual synchronization.</p>
+                    </article>
+                    <article class="conclusion-card fade-in-up">
+                        <span>04</span>
+                        <h3>Few-step generation remains stable over long rollouts.</h3>
+                        <p>An 8-step distilled generator combines causal audio-visual teacher forcing with short- and long-horizon Self-Gradient Forcing on self-generated histories.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="results" class="section">
+            <div class="container-wide">
+                <div class="section-header fade-in-up">
+                    <h2>Results</h2>
+                    <p>Evaluation on 100 stories and 3,000 shots measures cross-shot consistency, quality, text alignment, speech fidelity, and human preference.</p>
+                </div>
+
+                <div class="table-card fade-in-up">
+                    <div class="results-caption">
+                        <div class="results-caption-copy">
+                            <h3>Long-horizon automatic evaluation</h3>
+                            <p>JoyAI-Echo-1.5 ranks first on six of seven metrics and second on aesthetic quality. All metrics are higher-is-better.</p>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="results-table gsb-table">
+                            <colgroup>
+                                <col class="aspect-col">
+                                <col class="metric-col">
+                                <col class="metric-col">
+                                <col class="metric-col">
+                                <col class="metric-col">
+                                <col class="metric-col">
+                                <col class="metric-col">
+                                <col class="metric-col">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">Method</th>
+                                    <th colspan="3">Cross-Shot Consistency</th>
+                                    <th colspan="2">Video Quality</th>
+                                    <th>Text</th>
+                                    <th>Speech</th>
+                                </tr>
+                                <tr>
+                                    <th>ViCLIP</th>
+                                    <th>Self-CIDS</th>
+                                    <th>Voice</th>
+                                    <th>Aesthetic</th>
+                                    <th>Imaging</th>
+                                    <th>CLIP</th>
+                                    <th>Recall</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>JavisDiT++</td>
+                                    <td>0.6955</td><td>0.5621</td><td>0.7933</td><td>0.5019</td><td>0.6084</td><td>0.2522</td><td>0.0951</td>
+                                </tr>
+                                <tr>
+                                    <td>LTX-2.3</td>
+                                    <td>0.7047</td><td>0.6135</td><td>0.6847</td><td>0.5436</td><td>0.4751</td><td>0.2559</td><td>0.9304</td>
+                                </tr>
+                                <tr>
+                                    <td>LTX-2.5</td>
+                                    <td>0.7775</td><td>0.6640</td><td>0.7603</td><td><strong>0.6019</strong></td><td>0.5804</td><td>0.2683</td><td>0.9545</td>
+                                </tr>
+                                <tr>
+                                    <td>ShotStream + MMAudio</td>
+                                    <td>0.7988</td><td>0.7308</td><td>0.7945</td><td>0.5255</td><td>0.6044</td><td>0.1998</td><td>0.0297</td>
+                                </tr>
+                                <tr>
+                                    <td>StoryMem + MMAudio</td>
+                                    <td>0.7897</td><td>0.7491</td><td>0.7643</td><td>0.5265</td><td>0.6320</td><td>0.2368</td><td>0.0301</td>
+                                </tr>
+                                <tr>
+                                    <td>HappyOyster (Directing)</td>
+                                    <td>0.7535</td><td>0.6940</td><td>0.7705</td><td>0.5606</td><td>0.6701</td><td>0.2544</td><td>0.1085</td>
+                                </tr>
+                                <tr>
+                                    <td>JoyAI-Echo-1.0</td>
+                                    <td>0.8026</td><td>0.7793</td><td>0.8129</td><td>0.5679</td><td>0.7058</td><td>0.2658</td><td>0.9489</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>JoyAI-Echo-1.5</strong></td>
+                                    <td><strong>0.8264</strong></td><td><strong>0.7937</strong></td><td><strong>0.8524</strong></td><td>0.5705</td><td><strong>0.7467</strong></td><td><strong>0.2868</strong></td><td><strong>0.9674</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="table-card fade-in-up">
+                    <div class="results-caption">
+                        <div class="results-caption-copy">
+                            <h3>Human evaluation against HappyOyster</h3>
+                            <p>Good-Similar-Bad pairwise comparison for long-horizon audio-visual generation.</p>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="results-table gsb-table">
+                            <colgroup>
+                                <col class="aspect-col">
+                                <col class="metric-col">
+                                <col class="metric-col">
+                                <col class="metric-col">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>Aspect</th>
+                                    <th>JoyAI-Echo-1.5</th>
+                                    <th>Similar</th>
+                                    <th>HappyOyster</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Story-instruction following</td><td><strong>38.6%</strong></td><td>43.8%</td><td>17.7%</td></tr>
+                                <tr><td>Dialogue/background-audio following</td><td><strong>39.2%</strong></td><td>37.3%</td><td>23.5%</td></tr>
+                                <tr><td>Memory/identity consistency</td><td><strong>24.8%</strong></td><td>59.5%</td><td>15.7%</td></tr>
+                                <tr><td>Audio-visual synchronization</td><td><strong>48.4%</strong></td><td>31.4%</td><td>20.3%</td></tr>
+                                <tr><td>Audio quality</td><td><strong>44.4%</strong></td><td>22.2%</td><td>33.3%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contributors" class="section section-alt">
+            <div class="container-wide">
+                <div class="section-header fade-in-up">
+                    <h2>Authors</h2>
+                </div>
+                <p class="contributors-list fade-in-up">
+                    <span>Haoran Li<sup>1,*</sup></span>
+                    <span>Fredreic Li<sup>2,*</sup></span>
+                    <span>Shichen Ma<sup>1,*</sup></span>
+                    <span>Jie Huang<sup>1,*</sup></span>
+                    <span>Yijun Liu<sup>3</sup></span>
+                    <span>Jiaqi Shi<sup>4</sup></span>
+                    <span>Yanwen Ma<sup>5</sup></span>
+                    <span>Yaofeng Su<sup>6</sup></span>
+                    <span>Xin Lu<sup>4</sup></span>
+                    <span>Haoyu Wang<sup>3</sup></span>
+                    <span>Xiaoxiao Ma<sup>4</sup></span>
+                    <span>Guohui Zhang<sup>4</sup></span>
+                    <span>Yaowei Li<sup>2</sup></span>
+                    <span>Mingchen Zhong<sup>4</sup></span>
+                    <span>Junhao Zhuang<sup>1</sup></span>
+                    <span>Songchun Zhang<sup>7</sup></span>
+                    <span>Weiyang Jin<sup>8</sup></span>
+                    <span>Yuxuan Bian<sup>9</sup></span>
+                    <span>Shiyi Zhang<sup>3</sup></span>
+                    <span>Haojun Xu<sup>5</sup></span>
+                    <span>Shuai Lu<sup>1</sup></span>
+                    <span>Xin Han<sup>1</sup></span>
+                    <span>Wei Tang<sup>1</sup></span>
+                    <span>Tong He<sup>1</sup></span>
+                    <span>Jiaqi Wang<sup>1</sup></span>
+                    <span>Ping Luo<sup>8</sup></span>
+                    <span>Haoyang Huang<sup>1</sup></span>
+                    <span>Zeyue Xue<sup>1,8,*,+</sup></span>
+                    <span>Nan Duan<sup>1</sup></span>
+                </p>
+                <p class="affiliations-list fade-in-up">
+                    <span><sup>1</sup>Joy Future Academy, JD</span>
+                    <span><sup>2</sup>Peking University</span>
+                    <span><sup>3</sup>Tsinghua University</span>
+                    <span><sup>4</sup>The University of Science and Technology of China</span>
+                    <span><sup>5</sup>Beihang University</span>
+                    <span><sup>6</sup>Fudan University</span>
+                    <span><sup>7</sup>The Hong Kong University of Science and Technology</span>
+                    <span><sup>8</sup>The University of Hong Kong</span>
+                    <span><sup>9</sup>The Chinese University of Hong Kong</span>
+                </p>
+                <p class="author-note fade-in-up">
+                    * Equal contribution. + Project lead.
+                </p>
+            </div>
+        </section>
+
+        <section id="bibtex" class="section">
+            <div class="container">
+                <div class="section-header fade-in-up">
+                    <h2>BibTeX</h2>
+                </div>
+                <div class="bibtex-card fade-in-up">
+                    <button class="bibtex-copy" type="button" data-copy-bibtex>Copy</button>
+                    <pre><code>@techreport{joyai2026echo15,
+  title        = {Long-Horizon Audio-Visual Generation for Persistent Stories and Interactive Worlds},
+  author       = {{Echo Team @ Joy Future Academy, JD}},
+  institution  = {Joy Future Academy, JD},
+  year         = {2026},
+  month        = {August}
+}</code></pre>
+                </div>
+            </div>
+        </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Echo Team, Joy Future Academy, JD. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div class="modal" aria-hidden="true" role="dialog" aria-label="Video preview">
+        <div class="modal-backdrop" data-close-modal></div>
+        <div class="modal-window">
+            <button class="modal-close" type="button" aria-label="Close preview" data-close-modal></button>
+            <video class="modal-video" controls playsinline></video>
+            <div class="modal-copy">
+                <h3></h3>
+                <p></p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

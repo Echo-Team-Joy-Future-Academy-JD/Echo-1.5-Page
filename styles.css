@@ -2983,8 +2983,8 @@
 .memory-stage-only .video-terminal {
   --video-radius: 24px;
   top: 50%;
-  width: min(61vw, 900px);
-  max-width: calc(100vw - 330px);
+  width: min(76.25vw, 1125px);
+  max-width: calc(100vw - 220px);
   padding: 0;
   box-shadow: 0 24px 86px rgba(0, 0, 0, 0.7);
 }
@@ -3123,6 +3123,187 @@
   pointer-events: none;
   cursor: crosshair;
   touch-action: none;
+}
+
+.memory-case-reels {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.memory-case-reel {
+  --reel-size: clamp(162px, 15.75vw, 231px);
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  width: var(--reel-size);
+  height: var(--reel-size);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.48s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.memory-case-reel-prev {
+  left: 0;
+  transform: translate3d(-50%, -50%, 0);
+}
+
+.memory-case-reel-next {
+  right: 0;
+  transform: translate3d(50%, -50%, 0);
+}
+
+.memory-case-reel-prev:hover,
+.memory-case-reel-prev:focus-visible {
+  outline: none;
+  transform: translate3d(-8%, -50%, 0) scale(1.04);
+}
+
+.memory-case-reel-next:hover,
+.memory-case-reel-next:focus-visible {
+  outline: none;
+  transform: translate3d(8%, -50%, 0) scale(1.04);
+}
+
+.memory-case-reel-disc {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 16%, #050505 0 7%, transparent 7.5%),
+    radial-gradient(circle at 82% 39%, #050505 0 7%, transparent 7.5%),
+    radial-gradient(circle at 70% 77%, #050505 0 7%, transparent 7.5%),
+    radial-gradient(circle at 30% 77%, #050505 0 7%, transparent 7.5%),
+    radial-gradient(circle at 18% 39%, #050505 0 7%, transparent 7.5%),
+    repeating-radial-gradient(circle, #242424 0 2px, #111 3px 6px);
+  box-shadow:
+    0 0 0 4px rgba(0, 0, 0, 0.46),
+    0 18px 44px rgba(0, 0, 0, 0.62);
+  transition:
+    transform 0.72s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.memory-case-reel-disc::before {
+  position: absolute;
+  inset: 8%;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
+  content: "";
+  box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.72);
+  pointer-events: none;
+}
+
+.memory-case-reel-disc img {
+  position: absolute;
+  inset: 21%;
+  width: 58%;
+  height: 58%;
+  border: 2px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  object-fit: cover;
+  filter: saturate(0.72) brightness(0.72);
+  opacity: 0.58;
+  transform: scale(0.92);
+  transition:
+    inset 0.48s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.48s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.48s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.28s ease,
+    opacity 0.28s ease,
+    transform 0.48s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.memory-case-reel-disc i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  width: 12%;
+  height: 12%;
+  border: 2px solid rgba(255, 255, 255, 0.52);
+  border-radius: 50%;
+  background: #090909;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.46);
+  transform: translate(-50%, -50%);
+}
+
+.memory-case-reel:hover .memory-case-reel-disc,
+.memory-case-reel:focus-visible .memory-case-reel-disc {
+  border-color: rgba(255, 74, 87, 0.62);
+  box-shadow:
+    0 0 0 4px rgba(214, 31, 44, 0.2),
+    0 22px 54px rgba(0, 0, 0, 0.7);
+  transform: rotate(18deg);
+}
+
+.memory-case-reel:hover .memory-case-reel-disc img,
+.memory-case-reel:focus-visible .memory-case-reel-disc img {
+  inset: 14%;
+  width: 72%;
+  height: 72%;
+  filter: saturate(1) brightness(0.94);
+  opacity: 1;
+  transform: scale(1);
+}
+
+.memory-case-reel.is-spinning .memory-case-reel-disc {
+  animation: memoryReelSpin 0.58s cubic-bezier(0.2, 0.78, 0.22, 1);
+}
+
+.memory-case-reel-copy {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  width: 126px;
+  color: rgba(255, 255, 255, 0.78);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 0.92rem;
+  font-weight: 300;
+  letter-spacing: 0.055em;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  transform: translateY(-34%);
+  transition: opacity 0.24s ease, transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.memory-case-reel-prev .memory-case-reel-copy {
+  left: 88%;
+  text-align: left;
+}
+
+.memory-case-reel-next .memory-case-reel-copy {
+  right: 88%;
+  text-align: right;
+}
+
+.memory-case-reel:hover .memory-case-reel-copy,
+.memory-case-reel:focus-visible .memory-case-reel-copy {
+  opacity: 1;
+  transform: translateY(-50%);
+}
+
+.intro-hero-stage.is-next-visible .memory-case-reels {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes memoryReelSpin {
+  0% { transform: rotate(18deg) scale(1); }
+  62% { transform: rotate(300deg) scale(0.92); }
+  100% { transform: rotate(378deg) scale(1); }
 }
 
 .memory-stage-only.is-player-focused .memory-playback-progress {
@@ -3367,8 +3548,8 @@
 
 @media (max-width: 920px) {
   .memory-stage-only .video-terminal {
-    width: min(70vw, 660px);
-    max-width: calc(100vw - 152px);
+    width: min(87.5vw, 825px);
+    max-width: calc(100vw - 48px);
   }
 
   .memory-stage-only .memory-orb {
@@ -3392,8 +3573,8 @@
 @media (max-width: 560px) {
   .memory-stage-only .video-terminal {
     top: 50%;
-    width: 88vw;
-    max-width: 88vw;
+    width: 96vw;
+    max-width: 96vw;
   }
 
   .memory-stage-only .video-terminal .video-glow {
@@ -3423,6 +3604,32 @@
     gap: 2px;
     padding-inline: 2px;
   }
+
+  .memory-case-reel {
+    --reel-size: 123px;
+  }
+
+  .memory-case-reel-prev {
+    transform: translate3d(-50%, -50%, 0);
+  }
+
+  .memory-case-reel-next {
+    transform: translate3d(50%, -50%, 0);
+  }
+
+  .memory-case-reel-prev:hover,
+  .memory-case-reel-prev:focus-visible {
+    transform: translate3d(-8%, -50%, 0) scale(1.02);
+  }
+
+  .memory-case-reel-next:hover,
+  .memory-case-reel-next:focus-visible {
+    transform: translate3d(8%, -50%, 0) scale(1.02);
+  }
+
+  .memory-case-reel-copy {
+    display: none;
+  }
 }
 @font-face {
   font-family: "JDLangZheng";
@@ -3432,6 +3639,26 @@
   font-weight: 400;
   font-style: normal;
   font-display: swap;
+}
+
+.video-bg-page .intro-hero-content {
+  width: min(1280px, 100%);
+}
+
+.intro-next-hero h1 {
+  max-width: 1240px;
+  text-wrap: balance;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.intro-next-hero h1 .hero-title-brand {
+  color: var(--red-soft);
+}
+
+.intro-next-hero h1 .hero-title-keep {
+  color: inherit;
+  white-space: nowrap;
 }
 
 @font-face {

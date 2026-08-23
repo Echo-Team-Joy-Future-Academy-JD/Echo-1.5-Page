@@ -10,6 +10,7 @@
     "build": "vite build",
     "prepare:memory-case": "node scripts/prepare-memory-case.mjs",
     "prepare:last-visa-memory": "node scripts/prepare-last-visa-memory.mjs",
+    "prepare:previous-shot-case": "node scripts/prepare-previous-shot-case.mjs",
     "preview": "vite preview",
     "start": "vite preview",
     "test": "npm run build"

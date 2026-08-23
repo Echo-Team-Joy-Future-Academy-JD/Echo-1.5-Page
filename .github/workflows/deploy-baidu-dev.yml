@@ -1,0 +1,68 @@
+name: Deploy Echo 1.5 to Baidu Dev CPU
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: baidu-dev-cpu
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Sync, build, and restart preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out deployment script
+        uses: actions/checkout@v6
+
+      - name: Configure SSH
+        env:
+          BAIDU_DEV_SSH_KEY: ${{ secrets.BAIDU_DEV_SSH_KEY }}
+        run: |
+          test -n "$BAIDU_DEV_SSH_KEY" || {
+            echo "Missing repository secret: BAIDU_DEV_SSH_KEY" >&2
+            exit 1
+          }
+          install -d -m 700 "$HOME/.ssh"
+          printf '%s\n' "$BAIDU_DEV_SSH_KEY" > "$HOME/.ssh/baidu_dev_cpu"
+          chmod 600 "$HOME/.ssh/baidu_dev_cpu"
+          cp .github/baidu-dev-known_hosts "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/known_hosts"
+
+      - name: Package tracked repository files
+        run: |
+          git archive --format=tar --output="$RUNNER_TEMP/echo15-site.tar" HEAD
+          git ls-files > "$RUNNER_TEMP/echo15-tracked-files.txt"
+
+      - name: Upload repository snapshot
+        run: |
+          scp \
+            -i "$HOME/.ssh/baidu_dev_cpu" \
+            -P 7354 \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            "$RUNNER_TEMP/echo15-site.tar" \
+            "$RUNNER_TEMP/echo15-tracked-files.txt" \
+            root@114.111.22.100:/tmp/
+
+      - name: Build and restart Baidu preview
+        env:
+          SOURCE_REVISION: ${{ github.sha }}
+        run: |
+          ssh \
+            -i "$HOME/.ssh/baidu_dev_cpu" \
+            -p 7354 \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            root@114.111.22.100 \
+            "bash -s -- /tmp/echo15-site.tar /tmp/echo15-tracked-files.txt '$SOURCE_REVISION'" \
+            < scripts/deploy-baidu-dev.sh

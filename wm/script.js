@@ -94,7 +94,6 @@
         ["icy_wastes_lone_wanderer_action_overlay", "icy_wastes_lone_wanderer...ined_action_overlay (1).mp4", "Icy Wastes Lone Wanderer"],
         ["jungle_portal_robot", "jungle_portal_robot (3).mp4", "Jungle Portal Robot"],
         ["ruined_city_white_hair_smooth", "ruined_city_white_hair_smooth (3).mp4", "Ruined City Swordsman"],
-        ["bioluminescent_forest_3", "bioluminescent_forest (3).mp4", "Bioluminescent Forest Variant"],
         ["coral_reef_orange_fish", "coral_reef_orange_fish (1).mp4", "Coral Reef Orange Fish"],
         ["forbidden_city_paper_30fps", "forbidden_city_paper_30fps_interpolated_final (1).mp4", "Forbidden City Paper Plane"],
         ["output_action_24", "output_action (24) (2).mp4", "Action Output 24"],

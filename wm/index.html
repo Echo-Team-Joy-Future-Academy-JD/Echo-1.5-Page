@@ -37,37 +37,43 @@
           <p class="hero-lede">An omnimodal world model for generative media that responds to continuous navigation while video, environmental sound, music, and speech evolve together.</p>
           <div class="hero-authorship" aria-label="Authors and affiliations">
             <p class="hero-authors">
-              <span>Songchun Zhang<sup>1</sup></span>,
-              <span>Yaowei Li<sup>2</sup></span>,
-              <span>Junhao Zhuang<sup>3</sup></span>,
-              <span>Weiyang Jin<sup>4</sup></span>,
+              <span>Songchun Zhang<sup>1,3,*</sup></span>,
+              <span>Yaowei Li<sup>2,3,*</sup></span>,
+              <span>Junhao Zhuang<sup>3,*</sup></span>,
+              <span>Weiyang Jin<sup>4,*</sup></span>,
               <span>Haoyu Wang<sup>5</sup></span>,
               <span>Xin Lu<sup>6</sup></span>,
-              <span>Haoran Li<sup>6</sup></span>,
-              <span>Xiaoxiao Ma<sup>6</sup></span>,
-              <span>Yumin Li<sup>4</sup></span>,
+              <span>Shiyi Zhang<sup>5</sup></span>,
+              <span>Haoran Li<sup>3</sup></span>,
+              <span>Xiaoxiao Ma<sup>3,6</sup></span>,
+              <span>Yumin Li<sup>4,6</sup></span>,
               <span>Yijun Liu<sup>5</sup></span>,
               <span>Yaofeng Su<sup>7</sup></span>,
               <span>Yanwen Ma<sup>8</sup></span>,
-              <span>Haoyu Wu<sup>4</sup></span>,
+              <span>Haoyu Wu<sup>3,4</sup></span>,
               <span>Zihan Su<sup>5</sup></span>,
               <span>Yue Ma<sup>1</sup></span>,
               <span>Lvmin Zhang<sup>9</sup></span>,
               <span>Haoyang Huang<sup>3</sup></span>,
-	     <span>Zeyue Xue<sup>3</sup></span>,
-              <span>Anyi Rao<sup>1</sup></span>,
-              <span>Nan Duan<sup>3</sup></span>
+	          <span>Zeyue Xue<sup>3,‡</sup></span>,
+              <span>Anyi Rao<sup>1,†</sup></span>,
+              <span>Nan Duan<sup>3,†</sup></span>
             </p>
             <p class="hero-affiliations">
               <span><sup>1</sup>HKUST</span>
-              <span><sup>2</sup>Peking University</span>
+              <span><sup>2</sup>PKU</span>
               <span><sup>3</sup>JD Future Academy, JD</span>
-              <span><sup>4</sup>The University of Hong Kong</span>
-              <span><sup>5</sup>Tsinghua University</span>
-              <span><sup>6</sup>University of Science and Technology of China</span>
-              <span><sup>7</sup>Fudan University</span>
+              <span><sup>4</sup>HKU</span>
+              <span><sup>5</sup>THU</span>
+              <span><sup>6</sup>USTC</span>
+              <span><sup>7</sup>FDU</span>
               <span><sup>8</sup>Beihang University</span>
               <span><sup>9</sup>Stanford University</span>
+            </p>
+            <p class="hero-contributions">
+              <span><sup>*</sup>These authors contributed equally.</span>
+              <span><sup>†</sup>Corresponding authors.</span>
+              <span><sup>‡</sup>Project lead.</span>
             </p>
           </div>
           <div class="hero-actions">
@@ -261,6 +267,7 @@
                 <thead><tr><th scope="col">Model</th><th scope="col">Avg.</th><th scope="col">Quality</th><th scope="col">Setting</th><th scope="col">Interaction</th><th scope="col">Consistency</th><th scope="col">Physical</th></tr></thead>
                 <tbody>
                   <tr class="model-row"><th scope="row">EchoWM</th><td><strong>81.7</strong></td><td>81.5</td><td>79.4</td><td><strong>87.2</strong></td><td><u>89.8</u></td><td>70.6</td></tr>
+                  <tr class="model-row"><th scope="row">EchoWM-Flash</th><td><u>81.0</u></td><td>81.1</td><td>88.3</td><td><strong>87.9</strong></td><td>77.5</td><td>70.1</td></tr>
                   <tr><th scope="row">HiDream-O1-World</th><td><u>80.9</u></td><td>81.0</td><td>82.2</td><td>80.0</td><td>88.0</td><td><strong>73.3</strong></td></tr>
                   <tr><th scope="row">Alaya-EVOKE</th><td>80.8</td><td><strong>82.8</strong></td><td>83.8</td><td>78.6</td><td>86.9</td><td><u>72.1</u></td></tr>
                   <tr><th scope="row">LingBot-World (fast v2)</th><td>79.4</td><td>81.8</td><td>76.8</td><td>82.8</td><td>86.5</td><td>69.1</td></tr>

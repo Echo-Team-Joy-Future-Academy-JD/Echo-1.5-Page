@@ -42,11 +42,13 @@ button { font: inherit; }
 .hero h1 span { display: block; max-width: 700px; margin-top: 27px; font-family: Georgia, 'Times New Roman', serif; font-size: 31px; font-weight: 400; line-height: 1.17; }
 .hero-lede { max-width: 500px; margin: 29px 0 0; color: rgba(255,247,243,.73); font-size: 17px; line-height: 1.55; }
 .hero-authorship { max-width: 1060px; margin-top: 23px; }
-.hero-authors { margin: 0; color: rgba(255,247,243,.9); font-size: 12px; font-weight: 600; line-height: 1.75; }
+.hero-authors { margin: 0; color: rgba(255,247,243,.9); font-size: 13px; font-weight: 600; line-height: 1.75; }
 .hero-authors span { display: inline-block; white-space: nowrap; }
 .hero-authorship sup { position: relative; top: -.18em; margin-left: 2px; color: var(--mint); font-size: .72em; line-height: 0; }
 .hero-affiliations { display: flex; flex-wrap: wrap; gap: 4px 18px; max-width: 1120px; margin: 9px 0 0; color: rgba(255,247,243,.55); font-size: 10px; line-height: 1.55; }
 .hero-affiliations span { white-space: nowrap; }
+.hero-contributions { display: flex; flex-wrap: wrap; gap: 2px 16px; max-width: 1120px; margin: 6px 0 0; color: rgba(255,247,243,.48); font-size: 9px; line-height: 1.5; }
+.hero-contributions span { white-space: nowrap; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
 .button { display: inline-flex; align-items: center; justify-content: center; gap: 13px; min-height: 49px; padding: 0 20px; border: 1px solid rgba(255,247,243,.42); border-radius: 0; cursor: pointer; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; transition: background 180ms ease, border-color 180ms ease, color 180ms ease; }
 .button-primary { border-color: var(--mint); background: var(--mint); color: var(--ink); }
@@ -176,7 +178,7 @@ button { font: inherit; }
 
 @media (max-width: 620px) {
   .site-nav, .hero-content, .hero-foot { width: calc(100% - 32px); }.site-nav { padding-top: 18px; }.nav-cta { font-size: 10px; }.hero { min-height: 760px; }.hero-content { padding: 97px 0 62px; }.hero h1 { font-size: 47px; line-height: .96; }.hero h1 span { margin-top: 18px; font-size: 21px; }.hero-lede { font-size: 15px; }.hero-actions { margin-top: 23px; }.button { min-height: 45px; padding: 0 14px; font-size: 10px; }.hero-signals { display: grid; gap: 9px; padding-top: 27px; font-size: 9px; }.hero-foot { bottom: 18px; font-size: 8px; }.section-shell { width: calc(100% - 36px); }.overview, .abstract-band, .audio-band, .demos-band, .runs-band, .method-band, .results-band, .closing-band, .citation-band { padding-top: 82px; padding-bottom: 88px; }.overview h2, .abstract-grid h2, .method-band h2, .section-heading h2 { font-size: 48px; }.lead-copy { font-size: 22px; }.stat-row { grid-template-columns: repeat(2, 1fr); gap: 23px 13px; margin-top: 44px; }.stat-row strong { font-size: 24px; }.abstract-copy p { font-size: 14px; }.audio-feature-grid { margin-top: 46px; }.audio-feature { display: block; }.audio-feature-copy { padding-top: 15px; }.demo-grid { grid-template-columns: 1fr; gap: 47px; margin-top: 46px; }.demo-card, .demo-card-wide { grid-column: auto; }.demo-card-meta { min-height: 0; }.gallery-break { display: block; margin-top: 6px; }.gallery-break span { font-size: 28px; }.gallery-break p { margin-top: 10px; line-height: 1.5; }.chapter-results { margin-top: 47px; }.chapter-block + .chapter-block { margin-top: 76px; }.chapter-heading { grid-template-columns: 43px minmax(0, 1fr); gap: 11px; }.chapter-number { font-size: 34px; }.chapter-heading h3 { font-size: 32px; }.prompt-text { font-size: 11px; }.results-highlight { grid-template-columns: 1fr 1fr; gap: 24px 13px; margin-top: 46px; }.results-table-block { margin-top: 65px; }.table-heading h3 { font-size: 29px; }.closing-band h2 { font-size: 58px; }.citation-band h2 { font-size: 40px; }.bibtex pre { padding: 23px 18px; font-size: 11px; }.audio-note { align-items: flex-start; line-height: 1.5; }.listen-button { opacity: 1; bottom: 46px; }
-  .hero { height: auto; min-height: 900px; }.hero-content { min-height: 900px; }.hero-authorship { margin-top: 18px; }.hero-authors { font-size: 10.5px; line-height: 1.65; }.hero-affiliations { gap: 3px 12px; margin-top: 7px; font-size: 9px; line-height: 1.5; }
+  .hero { height: auto; min-height: 900px; }.hero-content { min-height: 900px; }.hero-authorship { margin-top: 18px; }.hero-authors { font-size: 11.5px; line-height: 1.65; }.hero-affiliations { gap: 3px 12px; margin-top: 7px; font-size: 9px; line-height: 1.5; }
 }
 
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; }.audio-bars i { animation: none; }.hero-video, .demo-video { animation: none; } }

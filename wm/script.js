@@ -259,19 +259,24 @@
   const allGeneratedVideos = chapterResults ? [...chapterResults.querySelectorAll(".demo-video")] : [];
   demoVideos.push(...allGeneratedVideos);
 
+  const prepareVideoSource = (video, source) => {
+    const mediaUrl = new URL(source, window.location.href);
+    if (mediaUrl.origin !== window.location.origin) video.crossOrigin = "anonymous";
+    if (mediaUrl.hostname.endsWith(".bcebos.com")) mediaUrl.searchParams.set("corsv", "20260824-1");
+    return mediaUrl.href;
+  };
+
   const loadVideo = (video) => {
     if (!video.src && video.dataset.src) {
-      const mediaUrl = new URL(video.dataset.src, window.location.href);
-      if (mediaUrl.origin !== window.location.origin) video.crossOrigin = "anonymous";
       if (video.dataset.fallbackSrc) {
         video.addEventListener("error", () => {
           if (video.dataset.didFallback) return;
           video.dataset.didFallback = "true";
-          video.src = video.dataset.fallbackSrc;
+          video.src = prepareVideoSource(video, video.dataset.fallbackSrc);
           video.load();
         }, { once: true });
       }
-      video.src = video.dataset.src;
+      video.src = prepareVideoSource(video, video.dataset.src);
       video.load();
     }
     if (!reducedMotion) video.play().catch(() => {});

@@ -1,4 +1,11 @@
 (() => {
+  const wmBosBase = "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/wm/";
+  const wmBosVideoUrl = (path) => `${wmBosBase}${path.replace(/^\.\//, "").split("/").map(encodeURIComponent).join("/")}`;
+
+  document.querySelectorAll('video[data-src^="./assets/"]').forEach((video) => {
+    video.dataset.src = wmBosVideoUrl(video.dataset.src);
+  });
+
   const heroVideo = document.querySelector("#hero-video");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const demoVideos = [...document.querySelectorAll(".demo-video")];
@@ -217,7 +224,7 @@
     ];
     const cards = chapterRuns.map(({ slug, directory, filename, source: remoteSource, displayTitle, local }, index) => {
       const archiveSource = directory ? `../output_results/gradio_app/${directory}/${filename}` : "";
-      const chapterSource = remoteSource || `./assets/optimized/results/${chapter.folder}/${filename}`;
+      const chapterSource = remoteSource || wmBosVideoUrl(`assets/optimized/results/${chapter.folder}/${filename}`);
       const promptUrl = remoteSource ? "" : `./assets/results/${chapter.folder}/prompt.txt`;
       const archivePromptUrl = directory ? `../output_results/gradio_app/${directory}/prompt.txt` : promptUrl;
       const promptIndexUrl = remoteSource ? "" : `./assets/results/${chapter.folder}/prompts.txt`;

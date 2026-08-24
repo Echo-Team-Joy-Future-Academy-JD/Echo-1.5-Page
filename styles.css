@@ -350,6 +350,44 @@
   cursor: default;
 }
 
+.coming-soon {
+  position: relative;
+  cursor: not-allowed;
+  opacity: .68;
+}
+
+.coming-soon:hover {
+  transform: none;
+}
+
+.coming-soon::after {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  z-index: 8;
+  padding: 6px 9px;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 5px;
+  content: attr(data-tooltip);
+  background: rgba(8,8,8,.94);
+  color: #fff;
+  font-family: "JetBrains Mono", monospace;
+  font-size: .64rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 5px);
+  transition: opacity 160ms ease, transform 160ms ease;
+  white-space: nowrap;
+}
+
+.coming-soon:hover::after,
+.coming-soon:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
 .video-bg-page .case-carousel {
   --case-frame-width: 76%;
 }
@@ -2372,6 +2410,26 @@
   color: rgba(255, 255, 255, 0.67);
   font-size: 0.82rem;
   font-weight: 480;
+}
+
+.video-bg-page .hero-metrics {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(620px, 100%);
+}
+
+.video-bg-page .contributors-list.contributors-team {
+  display: block;
+  max-width: none;
+  border-top: 0;
+}
+
+.video-bg-page .contributors-list.contributors-team span {
+  padding: 0;
+  border: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 550;
 }
 
 .video-bg-page .contributors-list sup,

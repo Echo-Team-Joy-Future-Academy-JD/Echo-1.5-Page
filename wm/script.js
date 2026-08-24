@@ -2,6 +2,60 @@
   const heroVideo = document.querySelector("#hero-video");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const demoVideos = [...document.querySelectorAll(".demo-video")];
+  const navHotspot = document.querySelector(".nav-hotspot");
+  const sideNavPanel = document.querySelector(".side-nav-panel");
+  const compactNav = document.querySelector(".compact-nav");
+  const hero = document.querySelector(".hero");
+  const pageSections = [...document.querySelectorAll("main section[id]")];
+  const trackedNavLinks = [...document.querySelectorAll('.site-nav a[href^="#"], .side-nav-panel a[href^="#"]')];
+
+  const setSideNavOpen = (open) => {
+    document.body.classList.toggle("wm-nav-open", open);
+    navHotspot?.setAttribute("aria-expanded", String(open));
+    sideNavPanel?.setAttribute("aria-hidden", String(!open));
+  };
+
+  const updateDockedNav = () => {
+    const docked = hero ? hero.getBoundingClientRect().bottom <= 80 : window.scrollY > window.innerHeight;
+    document.body.classList.toggle("wm-nav-docked", docked);
+    if (!docked) setSideNavOpen(false);
+  };
+
+  const updateActiveNav = () => {
+    const probe = Math.min(window.innerHeight * 0.3, 240);
+    let activeId = "";
+    pageSections.forEach((section) => {
+      const bounds = section.getBoundingClientRect();
+      if (bounds.top <= probe && bounds.bottom > probe) activeId = section.id;
+    });
+    trackedNavLinks.forEach((link) => {
+      const isActive = activeId && link.getAttribute("href") === `#${activeId}`;
+      if (isActive) link.setAttribute("aria-current", "location");
+      else link.removeAttribute("aria-current");
+    });
+  };
+
+  const updateNavigation = () => {
+    updateDockedNav();
+    updateActiveNav();
+  };
+
+  navHotspot?.addEventListener("click", () => setSideNavOpen(true));
+  compactNav?.addEventListener("mouseenter", () => setSideNavOpen(true));
+  compactNav?.addEventListener("mouseleave", () => setSideNavOpen(false));
+  sideNavPanel?.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => setSideNavOpen(false)));
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") setSideNavOpen(false);
+  });
+  document.addEventListener("pointerdown", (event) => {
+    if (!document.body.classList.contains("wm-nav-open")) return;
+    if (compactNav?.contains(event.target)) return;
+    setSideNavOpen(false);
+  });
+  window.addEventListener("scroll", updateNavigation, { passive: true });
+  window.addEventListener("resize", updateNavigation);
+  window.addEventListener("hashchange", updateActiveNav);
+  updateNavigation();
   const gradioRuns = [
     ["abandoned_room_toy_car", "run_0045_abandoned_room_toy_car", "abandoned_room_toy_car.mp4"],
     ["alien_cavern_winged_rider", "run_0008_alien_cavern_winged_rider", "alien_cavern_winged_rider.mp4"],

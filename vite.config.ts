@@ -1,6 +1,16 @@
 import { defineConfig } from "vite";
+import { cpSync } from "node:fs";
 import { resolve } from "node:path";
 import { devPasswordGate } from "./build/dev-password-gate.mjs";
+
+const copyDocuments = () => ({
+  name: "copy-documents",
+  closeBundle() {
+    cpSync(resolve(import.meta.dirname, "Doc"), resolve(import.meta.dirname, "dist/Doc"), {
+      recursive: true,
+    });
+  },
+});
 
 export default defineConfig({
   base: "./",
@@ -8,6 +18,7 @@ export default defineConfig({
     devPasswordGate({
       password: process.env.ECHO15_DEV_PASSWORD || "echo15",
     }),
+    copyDocuments(),
   ],
   build: {
     outDir: "dist",

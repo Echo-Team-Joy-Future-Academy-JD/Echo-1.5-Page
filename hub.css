@@ -52,12 +52,13 @@ a {
   min-height: 100svh;
   padding: clamp(24px, 4vw, 64px);
   overflow: hidden;
+  isolation: isolate;
 }
 
 .hub-shell::before {
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: -2;
   content: "";
   opacity: 0.42;
   background-image:
@@ -65,6 +66,151 @@ a {
     linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
   background-size: 42px 42px;
   mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+}
+
+.hub-geometry {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.geo {
+  position: absolute;
+  display: block;
+}
+
+.geo-frame {
+  top: 8%;
+  left: 6%;
+  width: clamp(92px, 12vw, 176px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 154, 122, .22);
+  clip-path: polygon(0 0, 100% 0, 100% 22%, 97% 22%, 97% 3%, 3% 3%, 3% 97%, 22% 97%, 22% 100%, 0 100%);
+  transform: rotate(45deg);
+}
+
+.geo-slash {
+  top: -9%;
+  left: 21%;
+  width: 15vw;
+  height: 38vh;
+  min-width: 100px;
+  background: rgba(255, 154, 122, .035);
+  border-right: 1px solid rgba(255, 154, 122, .18);
+  border-left: 1px solid rgba(255, 154, 122, .08);
+  transform: skewX(-24deg);
+}
+
+.geo-block {
+  top: 4%;
+  left: 33%;
+  width: clamp(90px, 12vw, 180px);
+  height: clamp(90px, 12vw, 180px);
+  background: linear-gradient(135deg, rgba(255,154,122,.11) 0 26%, transparent 26% 50%, rgba(255,154,122,.04) 50% 76%, transparent 76%);
+  transform: rotate(-18deg);
+}
+
+.geo-wm-arc {
+  top: -20%;
+  left: -11%;
+  width: clamp(280px, 38vw, 560px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(255,154,122,.13);
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  transform: rotate(18deg);
+}
+
+.geo-infinity {
+  top: -7%;
+  right: 8%;
+  width: clamp(165px, 22vw, 310px);
+  height: auto;
+  overflow: visible;
+  opacity: .22;
+  filter: drop-shadow(0 0 10px rgba(255,74,87,.22));
+}
+
+.geo-infinity circle {
+  fill: none;
+  stroke: #ff4a57;
+  stroke-width: 1;
+}
+
+.geo-orbit {
+  right: 0;
+  bottom: 0;
+  width: clamp(420px, 56vw, 820px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(255,74,87,.2);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, rgba(255,38,56,.17) 0, rgba(255,74,87,.085) 25%, rgba(255,74,87,.025) 48%, transparent 70%);
+  box-shadow: 0 0 90px rgba(255,74,87,.06);
+  transform: translate(50%, 50%);
+}
+
+.particle-field {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+
+.particle-field i {
+  --particle-size: 3px;
+  position: absolute;
+  width: var(--particle-size);
+  height: var(--particle-size);
+  opacity: .54;
+  animation: particleGlow 4.8s ease-in-out infinite;
+}
+
+.particle-field-wm i {
+  background: #ff9a7a;
+  box-shadow: 0 0 10px rgba(255,154,122,.7);
+  transform: rotate(45deg);
+}
+
+.particle-field-video i {
+  border-radius: 50%;
+  background: #ff4a57;
+  box-shadow: 0 0 12px rgba(255,74,87,.72);
+}
+
+.particle-field-wm i:nth-child(1) { top: 9%; left: 8%; }
+.particle-field-wm i:nth-child(2) { top: 17%; left: 43%; --particle-size: 2px; animation-delay: -1.8s; }
+.particle-field-wm i:nth-child(3) { top: 31%; left: 4%; --particle-size: 4px; animation-delay: -3.2s; }
+.particle-field-wm i:nth-child(4) { top: 42%; left: 34%; animation-delay: -.8s; }
+.particle-field-wm i:nth-child(5) { top: 7%; left: 29%; --particle-size: 2px; animation-delay: -2.5s; }
+.particle-field-wm i:nth-child(6) { top: 28%; left: 23%; --particle-size: 2px; animation-delay: -4s; }
+
+.particle-field-video i:nth-child(1) { bottom: 12%; right: 10%; --particle-size: 4px; animation-delay: -.4s; }
+.particle-field-video i:nth-child(2) { bottom: 37%; right: 43%; --particle-size: 2px; animation-delay: -2.1s; }
+.particle-field-video i:nth-child(3) { bottom: 29%; right: 4%; animation-delay: -3.7s; }
+.particle-field-video i:nth-child(4) { bottom: 7%; right: 33%; --particle-size: 4px; animation-delay: -1.2s; }
+.particle-field-video i:nth-child(5) { bottom: 45%; right: 31%; --particle-size: 2px; animation-delay: -3s; }
+.particle-field-video i:nth-child(6) { bottom: 24%; right: 22%; --particle-size: 2px; animation-delay: -4.4s; }
+
+@keyframes particleGlow {
+  0%, 100% { opacity: .2; filter: brightness(.85); }
+  50% { opacity: .72; filter: brightness(1.3); }
+}
+
+.geo-code {
+  font-size: .55rem;
+  font-weight: 600;
+  letter-spacing: .2em;
+  white-space: nowrap;
+}
+
+.geo-code {
+  top: 13%;
+  left: clamp(24px, 4vw, 64px);
+  color: rgba(255,255,255,.2);
+  writing-mode: vertical-rl;
 }
 
 .hub-header,
@@ -114,7 +260,7 @@ a {
   padding: clamp(24px, 3.6vw, 54px);
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 4px;
+  border-radius: 0;
   background: rgba(12, 12, 12, 0.72);
   transition: border-color 260ms ease, transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -150,6 +296,16 @@ a {
 
 .project-link-video {
   --accent: #ff4a57;
+  border-radius: 18px;
+}
+
+.project-link-wm .project-copy::before,
+.project-link-video .project-copy::before {
+  width: 38px;
+  height: 5px;
+  margin-bottom: 8px;
+  content: "";
+  background: var(--accent);
 }
 
 .project-link:hover,
@@ -182,6 +338,9 @@ a {
 }
 
 .project-copy strong {
+  display: grid;
+  min-height: 1.72em;
+  align-content: start;
   max-width: 8ch;
   font-size: clamp(3.5rem, 7.2vw, 7rem);
   font-weight: 600;
@@ -231,6 +390,14 @@ a {
 
   .project-link {
     min-height: 220px;
+  }
+
+  .project-link-video {
+    border-radius: 12px;
+  }
+
+  .geo-code {
+    display: none;
   }
 
   .project-copy strong {

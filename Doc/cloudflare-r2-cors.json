@@ -1,0 +1,17 @@
+{
+  "rules": [
+    {
+      "allowed": {
+        "origins": [
+          "https://echo-team-joy-future-academy-jd.github.io",
+          "http://127.0.0.1:5174",
+          "http://localhost:5174"
+        ],
+        "methods": ["GET", "HEAD"],
+        "headers": ["Range"]
+      },
+      "exposeHeaders": ["Accept-Ranges", "Content-Length", "Content-Range", "ETag"],
+      "maxAgeSeconds": 86400
+    }
+  ]
+}

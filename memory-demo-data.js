@@ -7,7 +7,9 @@
  * `window.ECHO_MEMORY_PROVIDER` before script.js executes.
  */
 
-const createMemoryCase = ({ id, title, directory, video, videoUrl, poster }) => {
+const videoCdnBase = new URL("https://echovideo.jd.cn/Echo15/");
+
+const createMemoryCase = ({ id, title, directory, video, poster }) => {
   const baseUrl = new URL(`../media/${directory}/`, document.baseURI);
   return Object.freeze({
     id,
@@ -16,7 +18,7 @@ const createMemoryCase = ({ id, title, directory, video, videoUrl, poster }) => 
     manifestUrl: new URL("manifest.json", baseUrl),
     video: {
       mode: "continuous",
-      src: videoUrl || new URL(`../media/source/${video}`, document.baseURI).href,
+      src: new URL(`media/source/${video}`, videoCdnBase).href,
       poster: new URL(`../media/source/${poster}`, document.baseURI).href,
     },
   });
@@ -27,7 +29,7 @@ export const memoryDemoCases = Object.freeze([
     id: "radio",
     title: "Radio",
     directory: "radio",
-    videoUrl: "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/radio.mp4?authorization=bce-auth-v1%2FALTAKrzbaeoF9qW4KrfkJNAAX3%2F2026-08-23T16%3A39%3A56Z%2F31536000%2Fhost%2Fa43279be88d9200f81ec132a7b27e1f32dab7c24be1759d9e800fcbddcfbec57",
+    video: "radio.mp4",
     poster: "radio-poster.jpg",
   }),
   createMemoryCase({

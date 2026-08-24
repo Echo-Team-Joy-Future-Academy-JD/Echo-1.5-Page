@@ -8,6 +8,8 @@ import {
 import { AmbientGlow } from "video-ambient-glow";
 import "./Echo-LongVideo-Page-1.0/assets/case-sections.js";
 
+const videoCdnBase = "https://echovideo.jd.cn/Echo15/";
+
 window.ECHO_CASE_MANIFEST = {
   schemaVersion: 1,
   groups: {
@@ -15,7 +17,7 @@ window.ECHO_CASE_MANIFEST = {
       {
         title: "Echo 1.5 · Blue Beard Long Case",
         description: "Memory-driven long-form generation showcase.",
-        src: "./media/source/blue-beard-long.mp4",
+        src: `${videoCdnBase}media/source/blue-beard-long.mp4`,
         poster: "./media/blue-beard/visual/shot-01/frame-04.jpg",
         type: "video/mp4",
       },
@@ -25,7 +27,7 @@ window.ECHO_CASE_MANIFEST = {
       return {
         title: `Memory Shot ${shot}`,
         description: "Ten-second shot extracted from the Echo 1.5 long case.",
-        src: `./media/blue-beard/shots/shot-${shot}.mp4`,
+        src: `${videoCdnBase}media/blue-beard/shots/shot-${shot}.mp4`,
         poster: `./media/blue-beard/visual/shot-${shot}/frame-04.jpg`,
         type: "video/mp4",
       };

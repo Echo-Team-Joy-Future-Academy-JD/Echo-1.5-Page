@@ -1,9 +1,15 @@
 (() => {
-  const wmBosBase = "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/wm/";
-  const wmBosVideoUrl = (path) => `${wmBosBase}${path.replace(/^\.\//, "").split("/").map(encodeURIComponent).join("/")}`;
+  const wmMediaBase = "https://echovideo.jd.cn/Echo15/wm/";
+  const sanitizeMediaPath = (path) => path.replace(/^\.\//, "").split("/").map((segment) => segment
+    .replaceAll("...", "-")
+    .replace(/[()]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-"))
+    .join("/");
+  const wmVideoUrl = (path) => `${wmMediaBase}${sanitizeMediaPath(path).split("/").map(encodeURIComponent).join("/")}`;
 
   document.querySelectorAll('video[data-src^="./assets/"]').forEach((video) => {
-    video.dataset.src = wmBosVideoUrl(video.dataset.src);
+    video.dataset.src = wmVideoUrl(video.dataset.src);
   });
 
   const heroVideo = document.querySelector("#hero-video");
@@ -136,11 +142,11 @@
         ["ti2av_r023_sana_c035_easy_indoor_016_seed3", "ti2av_r023_sana_c035-easy-indoor_016_seed3_continuous_ui.mp4"]
       ],
       remoteFiles: [
-        ["game1", "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/game1.mp4", "Game World 1"],
-        ["ti2av_r000_demo424_d0181_wmb_t27_seed1", "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/ti2av_r000_demo424_d0181-wmb-t27_seed1_continuous_ui.mp4", "WBench First-Person Rollout"],
-        ["ti2av_r010_demo424_d0179_wmb_t25_seed16", "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/ti2av_r010_demo424_d0179-wmb-t25_seed16_continuous_ui.mp4", "WBench First-Person Rollout 010"],
-        ["game3", "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/game3.mp4", "Game World 3"],
-        ["ti2av_r007_sana_c102_hard_indoor_003_seed3", "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/ti2av_r007_sana_c102-hard-indoor_003_seed3_continuous_ui.mp4", "Hard Indoor First-Person Rollout"]
+        ["game1", "https://echovideo.jd.cn/Echo15/game1.mp4", "Game World 1"],
+        ["ti2av_r000_demo424_d0181_wmb_t27_seed1", "https://echovideo.jd.cn/Echo15/ti2av_r000_demo424_d0181-wmb-t27_seed1_continuous_ui.mp4", "WBench First-Person Rollout"],
+        ["ti2av_r010_demo424_d0179_wmb_t25_seed16", "https://echovideo.jd.cn/Echo15/ti2av_r010_demo424_d0179-wmb-t25_seed16_continuous_ui.mp4", "WBench First-Person Rollout 010"],
+        ["game3", "https://echovideo.jd.cn/Echo15/game3.mp4", "Game World 3"],
+        ["ti2av_r007_sana_c102_hard_indoor_003_seed3", "https://echovideo.jd.cn/Echo15/ti2av_r007_sana_c102-hard-indoor_003_seed3_continuous_ui.mp4", "Hard Indoor First-Person Rollout"]
       ]
     },
     {
@@ -224,7 +230,7 @@
     ];
     const cards = chapterRuns.map(({ slug, directory, filename, source: remoteSource, displayTitle, local }, index) => {
       const archiveSource = directory ? `../output_results/gradio_app/${directory}/${filename}` : "";
-      const chapterSource = remoteSource || wmBosVideoUrl(`assets/optimized/results/${chapter.folder}/${filename}`);
+      const chapterSource = remoteSource || wmVideoUrl(`assets/optimized/results/${chapter.folder}/${filename}`);
       const promptUrl = remoteSource ? "" : `./assets/results/${chapter.folder}/prompt.txt`;
       const archivePromptUrl = directory ? `../output_results/gradio_app/${directory}/prompt.txt` : promptUrl;
       const promptIndexUrl = remoteSource ? "" : `./assets/results/${chapter.folder}/prompts.txt`;
@@ -262,7 +268,6 @@
   const prepareVideoSource = (video, source) => {
     const mediaUrl = new URL(source, window.location.href);
     if (mediaUrl.origin !== window.location.origin) video.crossOrigin = "anonymous";
-    if (mediaUrl.hostname.endsWith(".bcebos.com")) mediaUrl.searchParams.set("corsv", "20260824-1");
     return mediaUrl.href;
   };
 

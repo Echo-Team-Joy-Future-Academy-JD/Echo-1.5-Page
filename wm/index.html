@@ -13,6 +13,7 @@
     <header class="site-nav">
       <a class="brand" href="#top" aria-label="EchoWM home"><span class="brand-mark">E</span><span>EchoWM</span></a>
       <nav aria-label="Primary navigation">
+        <a href="#overview">Overview</a>
         <a href="#abstract">Abstract</a>
         <a href="#demos">Demos</a>
         <a href="#runs">Runs</a>
@@ -28,6 +29,7 @@
       <aside class="side-nav-panel" id="side-nav-panel" aria-label="Page navigation" aria-hidden="true">
         <a class="brand" href="#top" aria-label="EchoWM home"><span class="brand-mark">E</span><span>EchoWM</span></a>
       <nav>
+          <a href="#overview">Overview</a>
           <a href="#abstract">Abstract</a>
           <a href="#demos">Demos</a>
           <a href="#runs">Runs</a>
@@ -108,19 +110,43 @@
         </div>
       </section>
 
-      <section class="abstract-band band-light" id="abstract" aria-labelledby="abstract-title">
-        <div class="section-shell abstract-grid">
+      <section class="overview band-light" id="overview" aria-labelledby="overview-title">
+        <div class="section-shell overview-grid">
           <div>
-            <p class="eyebrow eyebrow-dark">Abstract</p>
-            <h2 id="abstract-title">An enterable model for generative media.</h2>
+            <p class="eyebrow eyebrow-dark">The idea</p>
+            <h2 id="overview-title">Content that responds.</h2>
           </div>
-          <div class="abstract-copy">
-            <p>Generative models can synthesize high-quality video with sound and speech, yet interaction with generated content remains largely passive; interactive world models support continuous control but are typically silent or tied to specific embodiments and action spaces.</p>
-            <p>We introduce <strong>EchoWM</strong>, an omnimodal world model for enterable generative media that responds to continuous navigation while jointly generating 720p video, environmental sound, music, and speech.</p>
-            <p>We organize interaction around camera intent: in first-person scenes, it specifies observer motion, while in third-person scenes, camera--character dynamics are learned from data without view-specific controllers. Discrete commands and continuous poses are mapped to a shared metric-scale relative 6-DoF trajectory, with dataset-level calibration preserving motion magnitude across heterogeneous data.</p>
-            <p>To jointly learn audio-visual generation and trajectory control, we construct a complementary data engine and adopt progressive training followed by autoregressive post-training for long-horizon generation.</p>
-            <p>Extensive evaluations show that <strong>EchoWM</strong> achieves strong trajectory following and high visual quality on public world-model benchmarks, generalizes across real, game, and stylized environments, supports first- and third-person interaction across varied subjects, and maintains synchronized environmental sound and speech over long-horizon generation.</p>
+          <div class="overview-copy">
+            <p class="lead-copy">Generative models can synthesize high-quality video with sound and speech, yet interaction with generated content remains largely passive. EchoWM makes the generated scene enterable: a reference observation, a structured scene description, and a user control signal become the starting state for a world that keeps moving, sounding, and responding.</p>
           </div>
+        </div>
+      </section>
+
+      <section class="audio-band" id="audio" aria-labelledby="audio-title">
+        <div class="section-shell">
+          <div class="section-heading section-heading-dark">
+            <div><p class="eyebrow eyebrow-mint">Audio is part of the state</p><h2 id="audio-title">Sound stays inside the world.</h2></div>
+            <p>Listen to the same rollouts that you watch. Environmental sound, music, and speech are generated with the scene and remain synchronized as the camera and subjects move.</p>
+          </div>
+          <div class="audio-feature-grid">
+            <article class="audio-feature">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/optimized/featured/audio/astronaut-blackhole.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="audio-feature-copy"><span class="media-index">01 / SPEECH</span><h3>Approaching the event horizon</h3><p>Radio static, life-support machinery, a low cosmic field, and a spoken line share the same trajectory.</p></div>
+            </article>
+            <article class="audio-feature">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/optimized/featured/audio/desolate_snow_covered_alien_landscape_action.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="audio-feature-copy"><span class="media-index">02 / SPEECH</span><h3>Voice across the snowfield</h3><p>Spoken voice, distant ambience, and movement remain synchronized through the generated scene.</p></div>
+            </article>
+            <article class="audio-feature">
+              <div class="video-frame"><video class="demo-video" data-src="https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/wm-on-screen-voice-cat-original-seed12.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="audio-feature-copy"><span class="media-index">03 / ON-SCREEN VOICE</span><h3>Speech inside the scene</h3><p>Visible action and generated speech evolve together within the same audio-visual rollout.</p></div>
+            </article>
+            <article class="audio-feature">
+              <div class="video-frame"><video class="demo-video" data-src="./assets/optimized/featured/audio/lone_traveler_stands_beside_turquoise_action (1).mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
+              <div class="audio-feature-copy"><span class="media-index">04 / ENVIRONMENT</span><h3>Traveler at the turquoise shore</h3><p>Environmental sound follows the traveler, landscape, and changing viewpoint as one generated world.</p></div>
+            </article>
+          </div>
+          <div class="audio-note"><span class="audio-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Native synchronized video + environmental sound + speech</span></div>
         </div>
       </section>
 
@@ -225,34 +251,6 @@
         </div>
       </section>
 
-      <section class="audio-band" id="audio" aria-labelledby="audio-title">
-        <div class="section-shell">
-          <div class="section-heading section-heading-dark">
-            <div><p class="eyebrow eyebrow-mint">Audio is part of the state</p><h2 id="audio-title">Sound stays inside the world.</h2></div>
-            <p>Listen to the same rollouts that you watch. Environmental sound, music, and speech are generated with the scene and remain synchronized as the camera and subjects move.</p>
-          </div>
-          <div class="audio-feature-grid">
-            <article class="audio-feature">
-              <div class="video-frame"><video class="demo-video" data-src="./assets/optimized/featured/audio/astronaut-blackhole.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
-              <div class="audio-feature-copy"><span class="media-index">01 / SPEECH</span><h3>Approaching the event horizon</h3><p>Radio static, life-support machinery, a low cosmic field, and a spoken line share the same trajectory.</p></div>
-            </article>
-            <article class="audio-feature">
-              <div class="video-frame"><video class="demo-video" data-src="./assets/optimized/featured/audio/desolate_snow_covered_alien_landscape_action.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
-              <div class="audio-feature-copy"><span class="media-index">02 / SPEECH</span><h3>Voice across the snowfield</h3><p>Spoken voice, distant ambience, and movement remain synchronized through the generated scene.</p></div>
-            </article>
-            <article class="audio-feature">
-              <div class="video-frame"><video class="demo-video" data-src="https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/wm-on-screen-voice-cat-original-seed12.mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
-              <div class="audio-feature-copy"><span class="media-index">03 / ON-SCREEN VOICE</span><h3>Speech inside the scene</h3><p>Visible action and generated speech evolve together within the same audio-visual rollout.</p></div>
-            </article>
-            <article class="audio-feature">
-              <div class="video-frame"><video class="demo-video" data-src="./assets/optimized/featured/audio/lone_traveler_stands_beside_turquoise_action (1).mp4" muted loop playsinline preload="metadata" controls></video><button class="listen-button" type="button">Listen with sound</button></div>
-              <div class="audio-feature-copy"><span class="media-index">04 / ENVIRONMENT</span><h3>Traveler at the turquoise shore</h3><p>Environmental sound follows the traveler, landscape, and changing viewpoint as one generated world.</p></div>
-            </article>
-          </div>
-          <div class="audio-note"><span class="audio-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Native synchronized video + environmental sound + speech</span></div>
-        </div>
-      </section>
-
       <section class="method-band band-light" id="method" aria-labelledby="method-title">
         <div class="section-shell method-grid">
           <div><p class="eyebrow eyebrow-dark">How it works</p><h2 id="method-title">One intent.<br />Many worlds.</h2></div>
@@ -333,6 +331,22 @@
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="abstract-band band-light" id="abstract" aria-labelledby="abstract-title">
+        <div class="section-shell abstract-grid">
+          <div>
+            <p class="eyebrow eyebrow-dark">Abstract</p>
+            <h2 id="abstract-title">An enterable model for generative media.</h2>
+          </div>
+          <div class="abstract-copy">
+            <p>Generative models can synthesize high-quality video with sound and speech, yet interaction with generated content remains largely passive; interactive world models support continuous control but are typically silent or tied to specific embodiments and action spaces.</p>
+            <p>We introduce <strong>EchoWM</strong>, an omnimodal world model for enterable generative media that responds to continuous navigation while jointly generating 720p video, environmental sound, music, and speech.</p>
+            <p>We organize interaction around camera intent: in first-person scenes, it specifies observer motion, while in third-person scenes, camera--character dynamics are learned from data without view-specific controllers. Discrete commands and continuous poses are mapped to a shared metric-scale relative 6-DoF trajectory, with dataset-level calibration preserving motion magnitude across heterogeneous data.</p>
+            <p>To jointly learn audio-visual generation and trajectory control, we construct a complementary data engine and adopt progressive training followed by autoregressive post-training for long-horizon generation.</p>
+            <p>Extensive evaluations show that <strong>EchoWM</strong> achieves strong trajectory following and high visual quality on public world-model benchmarks, generalizes across real, game, and stylized environments, supports first- and third-person interaction across varied subjects, and maintains synchronized environmental sound and speech over long-horizon generation.</p>
           </div>
         </div>
       </section>

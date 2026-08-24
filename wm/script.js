@@ -261,6 +261,8 @@
 
   const loadVideo = (video) => {
     if (!video.src && video.dataset.src) {
+      const mediaUrl = new URL(video.dataset.src, window.location.href);
+      if (mediaUrl.origin !== window.location.origin) video.crossOrigin = "anonymous";
       if (video.dataset.fallbackSrc) {
         video.addEventListener("error", () => {
           if (video.dataset.didFallback) return;
@@ -342,29 +344,23 @@
     const canvas = video.closest(".video-frame")?.querySelector(".audio-waveform");
     if (!canvas) return;
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
     let state = waveformState.get(video);
     if (!state) {
-      const mediaUrl = new URL(video.currentSrc || video.dataset.src || "", window.location.href);
-      const canAnalyzeAudio = AudioContextClass && mediaUrl.origin === window.location.origin;
-      state = { context: null, analyser: null, source: null, frame: 0 };
-      if (canAnalyzeAudio) {
-        try {
-          state.context = new AudioContextClass();
-          state.analyser = state.context.createAnalyser();
-          state.analyser.fftSize = 256;
-          state.source = state.context.createMediaElementSource(video);
-          state.source.connect(state.analyser);
-          state.analyser.connect(state.context.destination);
-        } catch {
-          state.context?.close().catch(() => {});
-          state.context = null;
-          state.analyser = null;
-          state.source = null;
-        }
+      try {
+        const context = new AudioContextClass();
+        const analyser = context.createAnalyser();
+        analyser.fftSize = 256;
+        const source = context.createMediaElementSource(video);
+        source.connect(analyser);
+        analyser.connect(context.destination);
+        state = { context, analyser, source, frame: 0 };
+      } catch {
+        return;
       }
       waveformState.set(video, state);
     }
-    state.context?.resume().catch(() => {});
+    state.context.resume().catch(() => {});
     const draw = () => {
       if (video.paused || video.ended || video.muted) {
         state.frame = 0;
@@ -380,17 +376,8 @@
         canvas.height = height;
       }
       const context = canvas.getContext("2d");
-      const values = new Uint8Array(state.analyser?.fftSize || 128);
-      if (state.analyser) {
-        state.analyser.getByteTimeDomainData(values);
-      } else {
-        const time = video.currentTime * 5.2;
-        const energy = 0.48 + Math.abs(Math.sin(time * 0.37)) * 0.52;
-        values.forEach((_, index) => {
-          const wave = Math.sin(index * 0.24 + time) + Math.sin(index * 0.61 - time * 1.27) * 0.42;
-          values[index] = 128 + wave * 31 * energy;
-        });
-      }
+      const values = new Uint8Array(state.analyser.fftSize);
+      state.analyser.getByteTimeDomainData(values);
       context.clearRect(0, 0, width, height);
       context.beginPath();
       context.strokeStyle = "rgba(255, 154, 122, .94)";

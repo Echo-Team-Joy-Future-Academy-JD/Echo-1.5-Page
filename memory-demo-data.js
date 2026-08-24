@@ -24,11 +24,11 @@ const createMemoryCase = ({ id, title, directory, video, videoUrl, poster }) => 
 
 export const memoryDemoCases = Object.freeze([
   createMemoryCase({
-    id: "last-visa",
-    title: "The Last Visa",
-    directory: "last-visa",
-    video: "the-last-visa.mp4",
-    poster: "the-last-visa-poster.jpg",
+    id: "radio",
+    title: "Radio",
+    directory: "radio",
+    videoUrl: "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/radio.mp4?authorization=bce-auth-v1%2FALTAKrzbaeoF9qW4KrfkJNAAX3%2F2026-08-23T16%3A39%3A56Z%2F31536000%2Fhost%2Fa43279be88d9200f81ec132a7b27e1f32dab7c24be1759d9e800fcbddcfbec57",
+    poster: "radio-poster.jpg",
   }),
   createMemoryCase({
     id: "rainbow",
@@ -45,11 +45,11 @@ export const memoryDemoCases = Object.freeze([
     poster: "task097-poster.jpg",
   }),
   createMemoryCase({
-    id: "radio",
-    title: "Radio",
-    directory: "radio",
-    videoUrl: "https://mayanwen.bj.bcebos.com/datatransfer/echo15-page-assets-20260824/videos/radio.mp4?authorization=bce-auth-v1%2FALTAKrzbaeoF9qW4KrfkJNAAX3%2F2026-08-23T16%3A39%3A56Z%2F31536000%2Fhost%2Fa43279be88d9200f81ec132a7b27e1f32dab7c24be1759d9e800fcbddcfbec57",
-    poster: "radio-poster.jpg",
+    id: "last-visa",
+    title: "The Last Visa",
+    directory: "last-visa",
+    video: "the-last-visa.mp4",
+    poster: "the-last-visa-poster.jpg",
   }),
   createMemoryCase({
     id: "august-23",

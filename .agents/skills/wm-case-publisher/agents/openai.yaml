@@ -1,0 +1,4 @@
+interface:
+  display_name: "WM Case Publisher"
+  short_description: "Upload and publish a new EchoWM video case"
+  default_prompt: "Use $wm-case-publisher to add a new video case to the EchoWM page."

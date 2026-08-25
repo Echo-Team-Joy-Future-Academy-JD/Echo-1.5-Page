@@ -1,5 +1,7 @@
 # Cloudflare video migration inventory
 
+For an interactive, single-case EchoWM publishing workflow, use [the repository `wm-case-publisher` skill](../.agents/skills/wm-case-publisher/SKILL.md). It uploads only the requested MP4, returns the CDN URL, and routes the corresponding WM page edit.
+
 Generated from the current site source and local media tree. Query strings are intentionally removed from BOS URLs so signed credentials are not copied into the inventory.
 
 ## Migration set

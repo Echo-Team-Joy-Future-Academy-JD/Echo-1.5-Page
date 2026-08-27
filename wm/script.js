@@ -146,7 +146,12 @@
         ["ti2av_r000_demo424_d0181_wmb_t27_seed1", "https://echovideo.jd.cn/Echo15/ti2av_r000_demo424_d0181-wmb-t27_seed1_continuous_ui.mp4", "WBench First-Person Rollout"],
         ["ti2av_r010_demo424_d0179_wmb_t25_seed16", "https://echovideo.jd.cn/Echo15/ti2av_r010_demo424_d0179-wmb-t25_seed16_continuous_ui.mp4", "WBench First-Person Rollout 010"],
         ["game3", "https://echovideo.jd.cn/Echo15/game3.mp4", "Game World 3"],
-        ["ti2av_r007_sana_c102_hard_indoor_003_seed3", "https://echovideo.jd.cn/Echo15/ti2av_r007_sana_c102-hard-indoor_003_seed3_continuous_ui.mp4", "Hard Indoor First-Person Rollout"]
+        ["ti2av_r007_sana_c102_hard_indoor_003_seed3", "https://echovideo.jd.cn/Echo15/ti2av_r007_sana_c102-hard-indoor_003_seed3_continuous_ui.mp4", "Hard Indoor First-Person Rollout"],
+        ["case_146_combined_continuous_ui", "https://echovideo.jd.cn/Echo15/wm/case_146_combined_continuous_ui.mp4", "First-Person Case 146"],
+        ["case_149_combined_continuous_ui", "https://echovideo.jd.cn/Echo15/wm/case_149_combined_continuous_ui.mp4", "First-Person Case 149"],
+        ["ti2av_r000_sana_c040_easy_outdoor_city_001_seed21", "https://echovideo.jd.cn/Echo15/wm/ti2av_r000_sana_c040-easy-outdoor_city_001_seed21_continuous_ui.mp4", "Easy Outdoor City 001"],
+        ["ti2av_r003_sana_c134_hard_outdoor_city_015_seed14", "https://echovideo.jd.cn/Echo15/wm/ti2av_r003_sana_c134-hard-outdoor_city_015_seed14_continuous_ui.mp4", "Hard Outdoor City 015"],
+        ["ti2av_r004_sana_c029_easy_indoor_010_seed214", "https://echovideo.jd.cn/Echo15/wm/ti2av_r004_sana_c029-easy-indoor_010_seed214_continuous_ui.mp4", "Easy Indoor 010"]
       ]
     },
     {
@@ -176,6 +181,12 @@
         ["ti2av_r014_wbench_c117_case_120_seed2", "ti2av_r014_wbench_c117-case_120_seed2_continuous_ui.mp4"],
         ["ti2av_r000_demo424_d0223_wmb_t16_seed1", "ti2av_r000_demo424_d0223-wmb-t16_seed1_continuous_ui.mp4"],
         ["ti2av_r027_demo424_d0149_wmb_t42_seed4", "ti2av_r027_demo424_d0149-wmb-t42_seed4_continuous_ui.mp4"]
+      ],
+      remoteFiles: [
+        ["ti2av_88_idx035172_s00468_audio", "https://echovideo.jd.cn/Echo15/wm/ti2av_88_idx035172_item__tchty02_sgh_20260306_02_010_b0011250__sgh_20260306_02_010_b0011250__s00468_audio_continuous_ui-2.mp4", "Third-Person Subject Control 035172"],
+        ["ti2av_r000_wbench_c008_case_11_seed1", "https://echovideo.jd.cn/Echo15/wm/ti2av_r000_wbench_c008-case_11_seed1_continuous_ui.mp4", "WBench Camera-Subject Case 11"],
+        ["ti2av_r019_wbench_c112_case_115_seed3", "https://echovideo.jd.cn/Echo15/wm/ti2av_r019_wbench_c112-case_115_seed3_continuous_ui.mp4", "WBench Camera-Subject Case 115"],
+        ["ti2av_r004_demo424_d0230_wmb_t27_seed1", "https://echovideo.jd.cn/Echo15/wm/ti2av_r004_demo424_d0230-wmb-t27_seed1_continuous_ui.mp4", "WBench Camera-Subject Rollout 0230"]
       ]
     },
     {
